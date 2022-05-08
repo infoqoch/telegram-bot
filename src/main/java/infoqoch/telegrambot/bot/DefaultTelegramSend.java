@@ -26,11 +26,35 @@ public class DefaultTelegramSend implements TelegramSend {
     private TelegramBotProperties properties;
     private JsonBind jsonBind;
 
+
     @Override
     public Response<Result> message(SendMessageRequest request) {
         final String requestBody = jsonBind.toJson(request);
         final HttpResponse response = execute(properties.getUrl().getSendMessage(), requestBody);
         return jsonBind.toObject(responseToJson(response), Result.class);
+    }
+
+    @Override
+    public HttpResponse execute(String url, String contentBody) {
+        try {
+            final HttpResponse response = httpClient.execute(generateHttpPost(url, contentBody));
+            validResponse(response);
+            return response;
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private HttpPost generateHttpPost(String url, String jsonString) {
+        final HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(new StringEntity(jsonString, ContentType.APPLICATION_JSON));
+        return httpPost;
+    }
+
+    private void validResponse(HttpResponse response) {
+        if (response.getStatusLine().getStatusCode() < 400) return;
+        if(response.getStatusLine().getStatusCode() < 500) throw new IllegalArgumentException(responseToJson(response));
+        throw new IllegalStateException(responseToJson(response));
     }
 
     private String responseToJson(HttpResponse response) {
@@ -41,30 +65,5 @@ public class DefaultTelegramSend implements TelegramSend {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    @Override
-    public HttpResponse execute(String url, String contentBody) {
-        try {
-            final HttpResponse response = httpClient.execute(generateHttpPost(url, contentBody));
-            valid(response);
-            return response;
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private void valid(HttpResponse response) {
-        if (response.getStatusLine().getStatusCode() < 400) return;
-
-        if(response.getStatusLine().getStatusCode() < 500) throw new IllegalArgumentException(responseToJson(response));
-
-        throw new IllegalStateException(responseToJson(response));
-    }
-
-    private HttpPost generateHttpPost(String url, String jsonString) {
-        final HttpPost httpPost = new HttpPost(url);
-        httpPost.setEntity(new StringEntity(jsonString, ContentType.APPLICATION_JSON));
-        return httpPost;
     }
 }
