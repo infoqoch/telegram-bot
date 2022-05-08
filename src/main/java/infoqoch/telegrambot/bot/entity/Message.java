@@ -1,6 +1,5 @@
 package infoqoch.telegrambot.bot.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -8,7 +7,7 @@ import java.time.Instant;
 
 @Getter
 @ToString
-public class Result {
+public class Message {
 	private Long messageId;
 	private Instant date;
 	private String text;

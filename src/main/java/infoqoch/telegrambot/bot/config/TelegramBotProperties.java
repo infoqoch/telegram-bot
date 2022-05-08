@@ -7,6 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 public class TelegramBotProperties {
     private final Url url;
+    private final int pollingTimeOut;
 
     public static TelegramBotProperties defaultProperties(String token) {
         String baseUrl = "https://api.telegram.org/bot" + token;
@@ -19,7 +20,7 @@ public class TelegramBotProperties {
                 .getFile(baseUrl + "/getFile")
                 .file("https://api.telegram.org/file/bot" + token)
                 .build();
-        return new TelegramBotProperties(url);
+        return new TelegramBotProperties(url, 600);
     }
 
     @Getter
