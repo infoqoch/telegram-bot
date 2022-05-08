@@ -3,6 +3,7 @@ package infoqoch.telegrambot.bot;
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
 import infoqoch.telegrambot.bot.entity.Message;
 import infoqoch.telegrambot.bot.entity.Response;
+import infoqoch.telegrambot.bot.entity.Update;
 import infoqoch.telegrambot.bot.request.SendMessageRequest;
 import infoqoch.telegrambot.util.DefaultJsonBind;
 import infoqoch.telegrambot.util.JsonBind;
@@ -18,16 +19,16 @@ import org.mockito.stubbing.OngoingStubbing;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class TelegramSendTest {
+class TelegramUpdateTest {
     // target
-    TelegramSend send;
+    TelegramUpdate update;
 
     // mock httpClient
     HttpClient httpClient;
@@ -48,52 +49,50 @@ class TelegramSendTest {
 
         when(httpResponse.getEntity()).thenReturn(httpEntity);
         when(httpResponse.getStatusLine()).thenReturn(statusLine);
-        when(httpClient.execute(any(HttpPost.class))).thenReturn(httpResponse);
+        when(httpClient.execute(any())).thenReturn(httpResponse);
 
-        send = new DefaultTelegramSend(httpClient, properties, jsonBind);
+        update = new DefaultTelegramUpdate(httpClient, properties, jsonBind);
     }
 
     @Test
-    void status_code_not_found() throws IOException {
-        // given
-        final int statusCode = 400;
-        String wrongMarkdownBody =  "{\"ok\":false,\"error_code\":400,\"description\":\"Bad Request: can't parse entities: Can't find end of Underline entity at byte offset 4\"}";
+    void update_list() throws IOException {
+        String target = "{\"ok\":true,\"result\":[{\"update_id\":567841804,\n" +
+                "\"message\":{\"message_id\":2102,\"from\":{\"id\":39327045,\"is_bot\":false,\"first_name\":\"\\uc11d\\uc9c4\",\"language_code\":\"ko\"},\"chat\":{\"id\":39327045,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1652025791,\"text\":\"hi\"}}]}\n" +
+                "listResponse = Response(ok=true, result=[Update(updateId=567841804, message=Message(messageId=2102, date=2022-05-08T16:03:11Z, text=hi, from=From(id=39327045, isBot=false, firstName=석진, username=null, languageCode=ko), chat=Chat(id=39327045, type=private, firstName=석진)), editedMessage=null)])";
 
-        mockStatusCode(statusCode);
-        mockEntityBody(wrongMarkdownBody);
 
-        // then
-        assertThatThrownBy(()->{
-            send.message(new SendMessageRequest(12354l, "wrong markdown"));
-        }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("can't parse entities");
-    }
-
-    @Test
-    void send_message() throws IOException {
         // given
         final int statusCode = 200;
-        final String text = "hi, \\ubc18\\uac00\\ubc18\\uac00";
-        final long chatId = 39327045;
-
         mockStatusCode(statusCode);
-        mockEntityBody(generateMockResponseBody(text, chatId));
+        mockEntityBody(target);
 
         // when
-        final Response<Message> result = send.message(new SendMessageRequest(chatId, text));
-        System.out.println("result = " + result);
+        final Response<List<Update>> response = update.get(0l);
+        final List<Update> updates = response.getResult();
 
         // then
-        assertThat(result.isOk()).isTrue();
-        final Message result1 = result.getResult();
-        System.out.println("result1 = " + result1);
-
-        final Long id = result.getResult().getChat().getId();
-        System.out.println("id = " + id);
+        assertThat(response.isOk()).isTrue();
+        assertThat(updates).size().isEqualTo(1);
+        assertThat(updates.get(0).getUpdateId()).isEqualTo(567841804);
     }
 
-    private String generateMockResponseBody(String text, long chatId) {
-        String contentBody  = "{\"ok\":true,\"result\":{\"message_id\":2092,\"from\":{\"id\":1959903402,\"is_bot\":true,\"first_name\":\"coffs_test\",\"username\":\"coffs_dic_test_bot\"},\"chat\":{\"id\":" + chatId + ",\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1652014357,\"text\":\"" + text + "\"}}";
-        return contentBody;
+    @Test
+    void update_empty() throws IOException {
+        String target = "{\"ok\":true,\"result\":[]}";
+
+
+        // given
+        final int statusCode = 200;
+        mockStatusCode(statusCode);
+        mockEntityBody(target);
+
+        // when
+        final Response<List<Update>> response = update.get(0l);
+        final List<Update> updates = response.getResult();
+
+        // then
+        assertThat(response.isOk()).isTrue();
+        assertThat(updates).size().isEqualTo(0);
     }
 
     private OngoingStubbing<Integer> mockStatusCode(int statusCode) {return when(statusLine.getStatusCode()).thenReturn(statusCode);

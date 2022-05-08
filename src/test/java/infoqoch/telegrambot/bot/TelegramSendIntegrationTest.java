@@ -1,28 +1,29 @@
 package infoqoch.telegrambot.bot;
 
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
-import infoqoch.telegrambot.bot.entity.Result;
+import infoqoch.telegrambot.bot.entity.Message;
 import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.request.SendMessageRequest;
 import infoqoch.telegrambot.util.DefaultJsonBind;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TelegramSendIntegrationTest {
-    TelegramSend send = setUp();
+    TelegramSend send;
     private TelegramBotProperties properties;
     private DefaultJsonBind jsonBind;
 
-    private TelegramSend setUp() {
-
+    @BeforeEach
+    private void setUp() {
         HttpClient httpClient = HttpClients.createDefault();
         jsonBind = new DefaultJsonBind();
         properties = TelegramBotProperties.defaultProperties("telegram-token");
-        return new DefaultTelegramSend(httpClient, properties, jsonBind);
+        send = new DefaultTelegramSend(httpClient, properties, jsonBind);
     }
 
     @Test
@@ -30,7 +31,7 @@ class TelegramSendIntegrationTest {
         long chatId = 39327045;
         String text = "hi, 반가반가";
 
-        final Response<Result> response = send.message(new SendMessageRequest(chatId, text));
+        final Response<Message> response = send.message(new SendMessageRequest(chatId, text));
 
 
         assertThat(response.isOk()).isTrue();

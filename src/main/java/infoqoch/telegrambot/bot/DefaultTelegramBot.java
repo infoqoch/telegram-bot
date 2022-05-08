@@ -16,5 +16,12 @@ public class DefaultTelegramBot implements TelegramBot {
     }
 
     @Override
-    public TelegramSend send() {return new DefaultTelegramSend(httpClient, properties, jsonBind);}
+    public TelegramSend send() {
+        return new DefaultTelegramSend(httpClient, properties, jsonBind);
+    }
+
+    @Override
+    public TelegramUpdate update() {
+        return new DefaultTelegramUpdate(httpClient, properties, jsonBind);
+    }
 }
