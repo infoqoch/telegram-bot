@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
 
 public class DefaultJsonBind implements JsonBind {
     private final ObjectMapper objectMapper;
@@ -32,6 +34,23 @@ public class DefaultJsonBind implements JsonBind {
         try {
             JavaType type = objectMapper.getTypeFactory().constructParametricType(Response.class, generic);
             return objectMapper.readValue(target, type);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
+    public <T extends Response> T toList(String target, Class generic) {
+        try {
+            JavaType list = objectMapper.getTypeFactory().constructCollectionType(List.class, generic);
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(Response.class, list);
+            final T result = objectMapper.readValue(target, type);
+            if(result.emptyResult()){
+                System.out.println("result = " + result);
+                result.setResult(Collections.emptyList());
+            }
+
+            return result;
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(e);
         }

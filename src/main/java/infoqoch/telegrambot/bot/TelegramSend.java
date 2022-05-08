@@ -1,12 +1,12 @@
 package infoqoch.telegrambot.bot;
 
-import infoqoch.telegrambot.bot.entity.Result;
+import infoqoch.telegrambot.bot.entity.Message;
 import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.request.SendMessageRequest;
-import org.apache.http.HttpResponse;
+import infoqoch.telegrambot.bot.response.HttpResponseWrapper;
 
 public interface TelegramSend {
-    HttpResponse execute(String url, String contentBody);
+    HttpResponseWrapper execute(String url, String contentBody);
 
-    Response<Result> message(SendMessageRequest request);
+    Response<Message> message(SendMessageRequest request);
 }
