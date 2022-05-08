@@ -6,7 +6,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 public class TelegramBotProperties {
-    private Url url;
+    private final Url url;
 
     public static TelegramBotProperties defaultProperties(String token) {
         String baseUrl = "https://api.telegram.org/bot" + token;
@@ -22,8 +22,8 @@ public class TelegramBotProperties {
         return new TelegramBotProperties(url);
     }
 
-    @Builder @AllArgsConstructor
     @Getter
+    @Builder @AllArgsConstructor
     public static class Url{
         private String sendMessage;
         private String getUpdate;
