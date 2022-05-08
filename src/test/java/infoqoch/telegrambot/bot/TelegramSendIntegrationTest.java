@@ -39,7 +39,7 @@ class TelegramSendIntegrationTest {
     }
 
     @Test
-    void wrong_chatId(){
+    void ex_wrong_chatId(){
         long chatId = 234098234092834098l;
         String text = "hi, 반가반가";
 
@@ -51,7 +51,7 @@ class TelegramSendIntegrationTest {
     }
 
     @Test
-    void empty_message(){
+    void ex_empty_message(){
         long chatId = 39327045;
         String text = "";
 
@@ -63,7 +63,7 @@ class TelegramSendIntegrationTest {
     }
 
     @Test
-    void wrong_url(){
+    void ex_wrong_url(){
         long chatId = 39327045;
         String text = "hi!";
 
@@ -77,7 +77,7 @@ class TelegramSendIntegrationTest {
     }
 
     @Test
-    void send_wrong_message_with_markdown(){
+    void ex_send_wrong_message_with_markdown(){
         long chatId = 39327045;
         String text = "hi, __반가반가";
 
@@ -87,5 +87,4 @@ class TelegramSendIntegrationTest {
 
         // {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Can't find end of Underline entity at byte offset 4"}
     }
-
 }

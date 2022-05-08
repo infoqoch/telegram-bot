@@ -69,7 +69,7 @@ class TelegramSendTest {
     }
 
     @Test
-    void work_well() throws IOException {
+    void send_message() throws IOException {
         // given
         final int statusCode = 200;
         final String text = "hi, \\ubc18\\uac00\\ubc18\\uac00";

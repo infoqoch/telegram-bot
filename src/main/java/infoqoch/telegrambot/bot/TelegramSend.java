@@ -6,7 +6,7 @@ import infoqoch.telegrambot.bot.request.SendMessageRequest;
 import org.apache.http.HttpResponse;
 
 public interface TelegramSend {
-    Response<Result> message(SendMessageRequest request);
-
     HttpResponse execute(String url, String contentBody);
+
+    Response<Result> message(SendMessageRequest request);
 }
