@@ -1,8 +1,10 @@
 package infoqoch.telegrambot.bot;
 
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
+import infoqoch.telegrambot.bot.entity.DocumentResult;
 import infoqoch.telegrambot.bot.entity.Message;
 import infoqoch.telegrambot.bot.entity.Response;
+import infoqoch.telegrambot.bot.request.SendDocumentRequest;
 import infoqoch.telegrambot.bot.request.SendMessageRequest;
 import infoqoch.telegrambot.util.DefaultJsonBind;
 import infoqoch.telegrambot.util.MarkdownStringBuilder;
@@ -10,6 +12,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,12 +32,38 @@ class TelegramSendIntegrationTest {
     }
 
     @Test
+    @DisplayName("기본적인 document 보내기")
+    void send_document(){
+        final Response<DocumentResult> response = send.document(new SendDocumentRequest(39327045, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", "샘플 파일"));
+
+        assertThat(response.isOk()).isTrue();
+        assertThat(response.getResult().getDocument().getMimeType()).isEqualTo("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        assertThat(response.getResult().getDocument().getFileName()).isEqualTo("sample.xlsx");
+        assertThat(response.getResult().getDocument().getFileSize()).isEqualTo(26440);
+
+        // {"ok":true,"result":{"message_id":2139,"from":{"id":1959903402,"is_bot":true,"first_name":"coffs_test","username":"coffs_dic_test_bot"},"chat":{"id":39327045,"first_name":"\uc11d\uc9c4","type":"private"},"date":1652608959,"document":{"file_name":"sample.xlsx","mime_type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","file_id":"BQACAgUAAxkDAAIIW2KAz78C3hv1TphEfB5ZJFQSnVslAAL_BAACg56JVdF3guuN7A6tJAQ","file_unique_id":"AgAD_wQAAoOeiVU","file_size":26440},"caption":"\uc0d8\ud50c \ud30c\uc77c"}}
+    }
+
+    @Test
+    @DisplayName("document 보내기 + 마크다운")
+    void send_document_markdown(){
+        final Response<DocumentResult> response = send.document(new SendDocumentRequest(39327045, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", new MarkdownStringBuilder().italic("이탈릭메시지!")));
+
+        assertThat(response.isOk()).isTrue();
+
+        assertThat(response.getResult().getDocument().getMimeType()).isEqualTo("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        assertThat(response.getResult().getDocument().getFileName()).isEqualTo("sample.xlsx");
+        assertThat(response.getResult().getDocument().getFileSize()).isEqualTo(26440);
+
+        assertThat(response.getResult().getCaptionEntities().get(0).getType()).isEqualTo("italic");
+
+        // {"ok":true,"result":{"message_id":2143,"from":{"id":1959903402,"is_bot":true,"first_name":"coffs_test","username":"coffs_dic_test_bot"},"chat":{"id":39327045,"first_name":"\uc11d\uc9c4","type":"private"},"date":1652609308,"document":{"file_name":"sample.xlsx","mime_type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","file_id":"BQACAgUAAxkDAAIIX2KA0RyYEZNXxw7qiny1i0Jj7-RqAAL_BAACg56JVdF3guuN7A6tJAQ","file_unique_id":"AgAD_wQAAoOeiVU","file_size":26440},"caption":"\uc774\ud0c8\ub9ad\uba54\uc2dc\uc9c0!","caption_entities":[{"offset":0,"length":7,"type":"italic"}]}}
+    }
+
+    @Test
+    @DisplayName("기본적인 메시지 보내기")
     void send_message(){
-        long chatId = 39327045;
-        String text = "hi, 반가반가";
-
-        final Response<Message> response = send.message(new SendMessageRequest(chatId, text));
-
+        final Response<Message> response = send.message(new SendMessageRequest(39327045, "hi, 반가반가"));
 
         assertThat(response.isOk()).isTrue();
 
@@ -42,14 +71,15 @@ class TelegramSendIntegrationTest {
     }
 
     @Test
+    @DisplayName("단순한 마크다운 메시지 보내기")
     void send_markdown_message(){
-        MarkdownStringBuilder msb = new MarkdownStringBuilder();
-        msb.plain("hi!").lineSeparator().italic("italic!").lineSeparator().code("while(true) beHappy(); ");
+        // given
+        MarkdownStringBuilder msb = new MarkdownStringBuilder().plain("hi!").lineSeparator().italic("italic!").lineSeparator().code("while(true) beHappy(); ");
 
+        // when
         final Response<Message> response = send.message(new SendMessageRequest(39327045, msb));
 
         assertThat(response.isOk()).isTrue();
-
         assertThat(response.getResult().getText()).isEqualTo("hi!\nitalic!\nwhile(true) beHappy();");
 
         assertThat(response.getResult().getEntities().get(0).getType()).isEqualTo("italic");
@@ -64,6 +94,7 @@ class TelegramSendIntegrationTest {
     }
 
     @Test
+    @DisplayName("복잡한 마크다운 메시지 보내기")
     void complex_markdown_test(){
         final MarkdownStringBuilder msb = new MarkdownStringBuilder()
                 .italic("흘림글씨야").lineSeparator()
@@ -100,25 +131,16 @@ class TelegramSendIntegrationTest {
     }
 
     @Test
+    @DisplayName("잘못된 chat_id")
     void ex_wrong_chatId(){
         assertThatThrownBy(()->{
             send.message(new SendMessageRequest(234098234092834098l, "hi, 반가반가"));
         }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("chat not found");
-
         // {"ok":false,"error_code":400,"description":"Bad Request: chat not found"}
     }
 
     @Test
-    @Disabled("empty를 텔레그램 api에서 확인하는 것이 아닌, 자바 로직에서 차단함. 더는 진입할 수 없는 테스트")
-    void ex_empty_message(){
-        assertThatThrownBy(()->{
-             getDefaultTelegramSend().execute(properties.getUrl().getSendMessage(), jsonBind.toJson(new SendMessageRequest(39327045, "")));
-        }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("message text is empty");
-
-        // {"ok":false,"error_code":400,"description":"Bad Request: message text is empty"}
-    }
-
-    @Test
+    @DisplayName("잘못된 url")
     void ex_wrong_url(){
         final String wrongUrl = properties.getUrl().getSendMessage().replace("sendMessage", "weoifjweoijf");
 
@@ -129,8 +151,7 @@ class TelegramSendIntegrationTest {
         // {"ok":false,"error_code":404,"description":"Not Found"}
     }
 
-    // send를 보내기 위한 package-private 메서드인 excute를 테스트 하기 위하여 생성한다.
-    // 해당 객체 자체의 동작 여부를 확인한다.
+    // url의 오류를 확인하기 하여 execute를 private이 아닌 package-private으로 둔다. 그리고 실제로 통신하기 위한 send 객체를 리턴한다. exeucte는 더 나아가 interface에 정의되지 않았다.
     private DefaultTelegramSend getDefaultTelegramSend() {
         HttpClient httpClient = HttpClients.createDefault();
         jsonBind = new DefaultJsonBind();
@@ -141,7 +162,16 @@ class TelegramSendIntegrationTest {
     }
 
     @Test
-    @Disabled // 모든 문자는 markdown 기준으로 escape 된다.
+    @Disabled("empty를 텔레그램 api에서 확인하는 것이 아닌, MarkdownStringBuilder 로직에서 차단함. 더는 진입할 수 없는 테스트")
+    void ex_empty_message(){
+        assertThatThrownBy(()->{
+             getDefaultTelegramSend().execute(properties.getUrl().getSendMessage(), jsonBind.toJson(new SendMessageRequest(39327045, "")));
+        }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("message text is empty");
+        // {"ok":false,"error_code":400,"description":"Bad Request: message text is empty"}
+    }
+
+    @Test
+    @Disabled("escape 처리 없이 바로 메시지를 텔레그램에 보낼 수 없다.")
     void ex_send_wrong_message_with_markdown(){
         long chatId = 39327045;
         String text = "hi, __반가반가";
