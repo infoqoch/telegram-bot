@@ -1,11 +1,14 @@
 package infoqoch.telegrambot.bot;
 
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
+import infoqoch.telegrambot.bot.entity.DocumentResult;
 import infoqoch.telegrambot.bot.entity.Message;
 import infoqoch.telegrambot.bot.entity.Response;
+import infoqoch.telegrambot.bot.request.SendDocumentRequest;
 import infoqoch.telegrambot.bot.request.SendMessageRequest;
 import infoqoch.telegrambot.util.DefaultJsonBind;
 import infoqoch.telegrambot.util.JsonBind;
+import infoqoch.telegrambot.util.MarkdownStringBuilder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -90,6 +93,44 @@ class TelegramSendTest {
         // then
         assertThat(response.isOk()).isTrue();
         assertThat(response.getResult().getChat().getId()).isEqualTo(39327045);
+    }
+
+
+    @Test
+    @DisplayName("기본적인 document 보내기")
+    void send_document() throws IOException {
+        // given
+        mockStatusCode(200);
+        mockEntityBody("{\"ok\":true,\"result\":{\"message_id\":2139,\"from\":{\"id\":1959903402,\"is_bot\":true,\"first_name\":\"coffs_test\",\"username\":\"coffs_dic_test_bot\"},\"chat\":{\"id\":39327045,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1652608959,\"document\":{\"file_name\":\"sample.xlsx\",\"mime_type\":\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\",\"file_id\":\"BQACAgUAAxkDAAIIW2KAz78C3hv1TphEfB5ZJFQSnVslAAL_BAACg56JVdF3guuN7A6tJAQ\",\"file_unique_id\":\"AgAD_wQAAoOeiVU\",\"file_size\":26440},\"caption\":\"\\uc0d8\\ud50c \\ud30c\\uc77c\"}}");
+
+        // when
+        final Response<DocumentResult> response = send.document(new SendDocumentRequest(39327045, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", "샘플 파일"));
+
+        // then
+        assertThat(response.isOk()).isTrue();
+        assertThat(response.getResult().getDocument().getMimeType()).isEqualTo("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        assertThat(response.getResult().getDocument().getFileName()).isEqualTo("sample.xlsx");
+        assertThat(response.getResult().getDocument().getFileSize()).isEqualTo(26440);
+    }
+
+    @Test
+    @DisplayName("document 보내기 + 마크다운")
+    void send_document_markdown() throws IOException {
+        //given
+        mockStatusCode(200);
+        mockEntityBody("{\"ok\":true,\"result\":{\"message_id\":2143,\"from\":{\"id\":1959903402,\"is_bot\":true,\"first_name\":\"coffs_test\",\"username\":\"coffs_dic_test_bot\"},\"chat\":{\"id\":39327045,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1652609308,\"document\":{\"file_name\":\"sample.xlsx\",\"mime_type\":\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\",\"file_id\":\"BQACAgUAAxkDAAIIX2KA0RyYEZNXxw7qiny1i0Jj7-RqAAL_BAACg56JVdF3guuN7A6tJAQ\",\"file_unique_id\":\"AgAD_wQAAoOeiVU\",\"file_size\":26440},\"caption\":\"\\uc774\\ud0c8\\ub9ad\\uba54\\uc2dc\\uc9c0!\",\"caption_entities\":[{\"offset\":0,\"length\":7,\"type\":\"italic\"}]}}");
+
+        // when
+        final Response<DocumentResult> response = send.document(new SendDocumentRequest(39327045, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", new MarkdownStringBuilder().italic("이탈릭메시지!")));
+
+        // then
+        assertThat(response.isOk()).isTrue();
+
+        assertThat(response.getResult().getDocument().getMimeType()).isEqualTo("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        assertThat(response.getResult().getDocument().getFileName()).isEqualTo("sample.xlsx");
+        assertThat(response.getResult().getDocument().getFileSize()).isEqualTo(26440);
+
+        assertThat(response.getResult().getCaptionEntities().get(0).getType()).isEqualTo("italic");
     }
 
     private String generateMockResponseBody(String text, long chatId) {
