@@ -1,8 +1,10 @@
 package infoqoch.telegrambot.bot;
 
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
+import infoqoch.telegrambot.bot.entity.DocumentResult;
 import infoqoch.telegrambot.bot.entity.Message;
 import infoqoch.telegrambot.bot.entity.Response;
+import infoqoch.telegrambot.bot.request.SendDocumentRequest;
 import infoqoch.telegrambot.bot.request.SendMessageRequest;
 import infoqoch.telegrambot.bot.response.HttpResponseWrapper;
 import infoqoch.telegrambot.util.JsonBind;
@@ -26,9 +28,14 @@ public class DefaultTelegramSend implements TelegramSend {
 
     @Override
     public Response<Message> message(SendMessageRequest request) {
-        final String requestBody = jsonBind.toJson(request);
-        final HttpResponseWrapper response = execute(properties.getUrl().getSendMessage(), requestBody);
+        final HttpResponseWrapper response = execute(properties.getUrl().getSendMessage(), jsonBind.toJson(request));
         return jsonBind.toObject(response.toJson(), Message.class);
+    }
+
+    @Override
+    public Response<DocumentResult> document(SendDocumentRequest request) {
+        final HttpResponseWrapper response = execute(properties.getUrl().getSendDocument(), jsonBind.toJson(request));
+        return jsonBind.toObject(response.toJson(), DocumentResult.class);
     }
 
     HttpResponseWrapper execute(String url, String contentBody) {
