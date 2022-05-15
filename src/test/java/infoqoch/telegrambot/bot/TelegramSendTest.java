@@ -69,6 +69,13 @@ class TelegramSendTest {
     }
 
     @Test
+    void ex_empty_message(){
+        assertThatThrownBy(()->{
+            send.message(new SendMessageRequest(39327045, ""));
+        }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("append message greater than 0");
+    }
+
+    @Test
     void send_message() throws IOException {
         // given
         final int statusCode = 200;
