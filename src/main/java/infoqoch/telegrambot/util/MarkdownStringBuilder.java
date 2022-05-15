@@ -5,6 +5,14 @@ import java.util.regex.Pattern;
 public class MarkdownStringBuilder {
     private final StringBuilder sb = new StringBuilder();
 
+    public String parseMode() {
+        return "MarkdownV2";
+    }
+
+    public String text() {
+        return toString();
+    }
+
     public MarkdownStringBuilder plain(String str) {
         sb.append(escape(str));
         return this;
