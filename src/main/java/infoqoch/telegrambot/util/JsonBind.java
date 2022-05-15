@@ -9,5 +9,5 @@ public interface JsonBind {
 
     <T extends Response> T toObject(String target, Class generic);
 
-    <T extends Response> T toList(String target, Class generic);
+    <T extends Response<List<E>>, E> T toList(String target, Class<E> generic);
 }

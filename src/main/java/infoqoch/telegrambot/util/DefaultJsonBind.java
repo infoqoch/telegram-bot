@@ -40,16 +40,14 @@ public class DefaultJsonBind implements JsonBind {
     }
 
     @Override
-    public <T extends Response> T toList(String target, Class generic) {
+    public <T extends Response<List<E>>, E> T toList(String target, Class<E> generic) {
         try {
             JavaType list = objectMapper.getTypeFactory().constructCollectionType(List.class, generic);
             JavaType type = objectMapper.getTypeFactory().constructParametricType(Response.class, list);
             final T result = objectMapper.readValue(target, type);
             if(result.emptyResult()){
-                System.out.println("result = " + result);
                 result.setResult(Collections.emptyList());
             }
-
             return result;
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(e);

@@ -1,5 +1,6 @@
 package infoqoch.telegrambot.util;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -14,6 +15,7 @@ public class ReplaceEverySingleStringSpeedTest {
     Map<String, Integer> compareMap;
 
     @Test
+    @Disabled // 테스트 완료하였고, 빠른 방법을 채택함.
     void compare_speed(){
         compareMap = new HashMap<>();
         compareMap.put("replace", 0);
