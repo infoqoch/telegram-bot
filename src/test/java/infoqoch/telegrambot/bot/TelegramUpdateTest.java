@@ -1,18 +1,16 @@
 package infoqoch.telegrambot.bot;
 
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
-import infoqoch.telegrambot.bot.entity.Message;
 import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.entity.Update;
-import infoqoch.telegrambot.bot.request.SendMessageRequest;
 import infoqoch.telegrambot.util.DefaultJsonBind;
 import infoqoch.telegrambot.util.JsonBind;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.OngoingStubbing;
 
@@ -55,16 +53,14 @@ class TelegramUpdateTest {
     }
 
     @Test
+    @DisplayName("1개의 updates 대응")
     void update_list() throws IOException {
-        String target = "{\"ok\":true,\"result\":[{\"update_id\":567841804,\n" +
-                "\"message\":{\"message_id\":2102,\"from\":{\"id\":39327045,\"is_bot\":false,\"first_name\":\"\\uc11d\\uc9c4\",\"language_code\":\"ko\"},\"chat\":{\"id\":39327045,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1652025791,\"text\":\"hi\"}}]}\n" +
-                "listResponse = Response(ok=true, result=[Update(updateId=567841804, message=Message(messageId=2102, date=2022-05-08T16:03:11Z, text=hi, from=From(id=39327045, isBot=false, firstName=석진, username=null, languageCode=ko), chat=Chat(id=39327045, type=private, firstName=석진)), editedMessage=null)])";
-
-
         // given
-        final int statusCode = 200;
-        mockStatusCode(statusCode);
-        mockEntityBody(target);
+        String mockResponseBody = "{\"ok\":true,\"result\":[{\"update_id\":567841804,\n" +
+                "\"message\":{\"message_id\":2102,\"from\":{\"id\":39327045,\"is_bot\":false,\"first_name\":\"\\uc11d\\uc9c4\",\"language_code\":\"ko\"},\"chat\":{\"id\":39327045,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1652025791,\"text\":\"hi\"}}]}";
+
+        mockStatusCode(200);
+        mockEntityBody(mockResponseBody);
 
         // when
         final Response<List<Update>> response = update.get(0l);
@@ -77,14 +73,12 @@ class TelegramUpdateTest {
     }
 
     @Test
+    @DisplayName("빈 updates")
     void update_empty() throws IOException {
-        String target = "{\"ok\":true,\"result\":[]}";
-
-
         // given
-        final int statusCode = 200;
-        mockStatusCode(statusCode);
-        mockEntityBody(target);
+        String mockResponseBody = "{\"ok\":true,\"result\":[]}";
+        mockStatusCode(200);
+        mockEntityBody(mockResponseBody);
 
         // when
         final Response<List<Update>> response = update.get(0l);

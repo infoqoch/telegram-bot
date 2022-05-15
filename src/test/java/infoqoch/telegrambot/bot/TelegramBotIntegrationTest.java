@@ -8,17 +8,16 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TelegramBotIntegrationTest {
-    TelegramBot bot = DefaultTelegramBotFactory.init("1959903402:AAFfvMCssvDcESLewCDvj5WZk83cbnIZ08o");
 
     @Test
     void 간단한_메시지_보내기(){
-        long chatId = 39327045;
-        String text = "hi, 반가반가";
+        // given
+        TelegramBot bot = DefaultTelegramBotFactory.init("1959903402:AAFfvMCssvDcESLewCDvj5WZk83cbnIZ08o");
 
-        final Response<Message> response = bot.send().message(new SendMessageRequest(chatId, text));
+        // when
+        final Response<Message> response = bot.send().message(new SendMessageRequest(39327045, "hi, 반가반가"));
 
-        System.out.println("response = " + response);
-
+        // then
         assertThat(response.isOk()).isTrue();
     }
 }
