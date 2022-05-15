@@ -9,6 +9,7 @@ import infoqoch.telegrambot.util.MarkdownStringBuilder;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +46,7 @@ class TelegramSendIntegrationTest {
         MarkdownStringBuilder msb = new MarkdownStringBuilder();
         msb.plain("hi!").lineSeparator().italic("italic!").lineSeparator().code("while(true) beHappy(); ");
 
-        final Response<Message> response = send.message(new SendMessageRequest(39327045, msb.toString()));
+        final Response<Message> response = send.message(new SendMessageRequest(39327045, msb));
 
         assertThat(response.isOk()).isTrue();
 
@@ -77,7 +78,7 @@ class TelegramSendIntegrationTest {
                 .plain("<h3>코드블럭!</h3>").lineSeparator()
                 .command("search", "abc 123");
 
-        final Response<Message> response = send.message(new SendMessageRequest(39327045, msb.toString()));
+        final Response<Message> response = send.message(new SendMessageRequest(39327045, msb));
 
         assertThat(response.isOk()).isTrue();
         assertThat(response.getResult().getText()).isEqualTo("흘림글씨야\n" +
@@ -138,6 +139,7 @@ class TelegramSendIntegrationTest {
     }
 
     @Test
+    @Disabled // 모든 문자는 markdown 기준으로 escape 된다.
     void ex_send_wrong_message_with_markdown(){
         long chatId = 39327045;
         String text = "hi, __반가반가";
