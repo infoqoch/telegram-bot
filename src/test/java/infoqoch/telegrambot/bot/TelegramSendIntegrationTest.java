@@ -50,7 +50,6 @@ class TelegramSendIntegrationTest {
 
         assertThat(response.isOk()).isTrue();
 
-        // assertThat(response.getResult().getText()).isEqualTo("hi!"+System.lineSeparator()+"italic!"+System.lineSeparator()+"while(true) beHappy();");
         assertThat(response.getResult().getText()).isEqualTo("hi!\nitalic!\nwhile(true) beHappy();");
 
         assertThat(response.getResult().getEntities().get(0).getType()).isEqualTo("italic");
@@ -65,7 +64,7 @@ class TelegramSendIntegrationTest {
     }
 
     @Test
-    void test(){
+    void complex_markdown_test(){
         final MarkdownStringBuilder msb = new MarkdownStringBuilder()
                 .italic("흘림글씨야").lineSeparator()
                 .italic("흘림글씨야!").lineSeparator()
@@ -102,23 +101,18 @@ class TelegramSendIntegrationTest {
 
     @Test
     void ex_wrong_chatId(){
-        long chatId = 234098234092834098l;
-        String text = "hi, 반가반가";
-
         assertThatThrownBy(()->{
-            send.message(new SendMessageRequest(chatId, text));
+            send.message(new SendMessageRequest(234098234092834098l, "hi, 반가반가"));
         }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("chat not found");
 
         // {"ok":false,"error_code":400,"description":"Bad Request: chat not found"}
     }
 
     @Test
+    @Disabled("empty를 텔레그램 api에서 확인하는 것이 아닌, 자바 로직에서 차단함. 더는 진입할 수 없는 테스트")
     void ex_empty_message(){
-        long chatId = 39327045;
-        String text = "";
-
         assertThatThrownBy(()->{
-            send.message(new SendMessageRequest(chatId, text));
+             getDefaultTelegramSend().execute(properties.getUrl().getSendMessage(), jsonBind.toJson(new SendMessageRequest(39327045, "")));
         }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("message text is empty");
 
         // {"ok":false,"error_code":400,"description":"Bad Request: message text is empty"}
@@ -126,16 +120,24 @@ class TelegramSendIntegrationTest {
 
     @Test
     void ex_wrong_url(){
-        long chatId = 39327045;
-        String text = "hi!";
-
         final String wrongUrl = properties.getUrl().getSendMessage().replace("sendMessage", "weoifjweoijf");
 
         assertThatThrownBy(()->{
-            send.execute(wrongUrl, jsonBind.toJson(new SendMessageRequest(chatId, text)));
+            getDefaultTelegramSend().execute(wrongUrl, jsonBind.toJson(new SendMessageRequest(39327045, "hi!")));
         }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Not Found");
 
         // {"ok":false,"error_code":404,"description":"Not Found"}
+    }
+
+    // send를 보내기 위한 package-private 메서드인 excute를 테스트 하기 위하여 생성한다.
+    // 해당 객체 자체의 동작 여부를 확인한다.
+    private DefaultTelegramSend getDefaultTelegramSend() {
+        HttpClient httpClient = HttpClients.createDefault();
+        jsonBind = new DefaultJsonBind();
+        properties = TelegramBotProperties.defaultProperties("telegram-token");
+
+        final DefaultTelegramSend send = new DefaultTelegramSend(httpClient, properties, jsonBind);
+        return send;
     }
 
     @Test
