@@ -91,6 +91,29 @@ class TelegramSendTest {
         System.out.println("id = " + id);
     }
 
+    @Test
+    void send_message_complex() throws IOException {
+        // given
+        final int statusCode = 200;
+        final String text = "hi, \\ubc18\\uac00\\ubc18\\uac00";
+        final long chatId = 39327045;
+
+        mockStatusCode(statusCode);
+        mockEntityBody(generateMockResponseBody(text, chatId));
+
+        // when
+        final Response<Message> result = send.message(new SendMessageRequest(chatId, text));
+        System.out.println("result = " + result);
+
+        // then
+        assertThat(result.isOk()).isTrue();
+        final Message result1 = result.getResult();
+        System.out.println("result1 = " + result1);
+
+        final Long id = result.getResult().getChat().getId();
+        System.out.println("id = " + id);
+    }
+
     private String generateMockResponseBody(String text, long chatId) {
         String contentBody  = "{\"ok\":true,\"result\":{\"message_id\":2092,\"from\":{\"id\":1959903402,\"is_bot\":true,\"first_name\":\"coffs_test\",\"username\":\"coffs_dic_test_bot\"},\"chat\":{\"id\":" + chatId + ",\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1652014357,\"text\":\"" + text + "\"}}";
         return contentBody;

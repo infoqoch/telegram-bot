@@ -10,7 +10,7 @@ import java.io.IOException;
 public class HttpResponseWrapper {
     private final HttpResponse response;
 
-    public HttpResponseWrapper(HttpResponse response) {
+    private HttpResponseWrapper(HttpResponse response) {
         this.response = response;
     }
 

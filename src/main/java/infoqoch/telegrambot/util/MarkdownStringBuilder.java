@@ -53,9 +53,9 @@ public class MarkdownStringBuilder {
         str = str.replaceAll("[\\*]", "\\\\*");
         str = str.replaceAll("[\\]]", "\\\\]");
         str = str.replaceAll("[\\[]", "\\\\[");
-        str = str.replaceAll("[\\(]", "\\\\(");
+        str = str.replaceAll("[(]", "\\(");
         str = str.replaceAll("[\\)]", "\\\\)");
-        str = str.replaceAll("[//)]", "\\\\/");
+         str = str.replaceAll("[\\/]", "\\\\/");
         str = str.replaceAll("[~]", "\\\\~");
         str = str.replaceAll("[`]", "\\\\`");
         str = str.replaceAll("[>]", "\\\\>");
