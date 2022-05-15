@@ -67,5 +67,4 @@ public class JsonBindTest {
         assertThat(response.isOk()).isTrue();
         assertThat(response.getResult()).size().isEqualTo(0);
     }
-
 }
