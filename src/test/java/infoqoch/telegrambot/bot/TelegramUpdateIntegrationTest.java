@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class TelegramUpdateIntegrationTest {
     TelegramUpdate update;
     TelegramBotProperties properties;
@@ -30,6 +32,9 @@ class TelegramUpdateIntegrationTest {
     @Test
     void get_updates(){
         final Response<List<Update>> listResponse = update.get(0l);
+        System.out.println("listResponse = " + listResponse);
+        assertThat(listResponse.isOk()).isTrue();
+        assertThat(listResponse.getResult().get(0).getUpdateId()).isGreaterThan(0l);
     }
 
 }
