@@ -10,7 +10,13 @@ public class MarkdownStringBuilder {
     }
 
     public String text() {
+        valid();
         return toString();
+    }
+
+    private void valid() {
+        if(sb.length()==0)
+            throw new IllegalArgumentException("append message greater than 0");
     }
 
     public MarkdownStringBuilder plain(String str) {

@@ -31,8 +31,7 @@ public class DefaultTelegramSend implements TelegramSend {
         return jsonBind.toObject(response.toJson(), Message.class);
     }
 
-    @Override
-    public HttpResponseWrapper execute(String url, String contentBody) {
+    HttpResponseWrapper execute(String url, String contentBody) {
         try {
             return HttpResponseWrapper.wrap(httpClient.execute(generateHttpPost(url, contentBody)));
         } catch (IOException e) {
