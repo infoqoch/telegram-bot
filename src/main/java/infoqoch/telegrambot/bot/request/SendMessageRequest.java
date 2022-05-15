@@ -1,5 +1,6 @@
 package infoqoch.telegrambot.bot.request;
 
+import infoqoch.telegrambot.util.MarkdownStringBuilder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -10,9 +11,13 @@ public class SendMessageRequest {
     private final String text;
     private final String parseMode;
 
-    public SendMessageRequest(long chatId, String message) {
+    public SendMessageRequest(long chatId, MarkdownStringBuilder msb) {
         this.chatId = chatId;
-        this.text = message;
-        this.parseMode = "MarkdownV2";
+        this.text = msb.text();
+        this.parseMode = msb.parseMode();
+    }
+
+    public SendMessageRequest(long chatId, String beforeEscapeText) {
+        this(chatId, new MarkdownStringBuilder().plain(beforeEscapeText));
     }
 }
