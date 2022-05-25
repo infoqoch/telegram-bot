@@ -16,12 +16,17 @@ public class DefaultTelegramBot implements TelegramBot {
     }
 
     @Override
+    public TelegramUpdate update() {
+        return new DefaultTelegramUpdate(httpClient, properties, jsonBind);
+    }
+
+    @Override
     public TelegramSend send() {
         return new DefaultTelegramSend(httpClient, properties, jsonBind);
     }
 
     @Override
-    public TelegramUpdate update() {
-        return new DefaultTelegramUpdate(httpClient, properties, jsonBind);
+    public TelegramFile file() {
+        return new DefaultTelegramFile(httpClient, properties, jsonBind);
     }
 }
