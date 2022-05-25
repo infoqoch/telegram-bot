@@ -72,6 +72,62 @@ class TelegramUpdateTest {
         assertThat(updates.get(0).getUpdateId()).isEqualTo(567841804);
     }
 
+
+    @Test
+    @DisplayName("기본 message 대응")
+    void update_plain_chat_message() throws IOException {
+        String mockResponseBody = "{\"ok\": true,\"result\": [{\"update_id\": 567841806,\"message\": {\"message_id\": 2148,\"from\": {\"id\": 39327045,\"is_bot\": false,\"first_name\": \"\\uc11d\\uc9c4\",\"language_code\": \"ko\"},\"chat\": {\"id\": 39327045,\"first_name\": \"\\uc11d\\uc9c4\",\"type\": \"private\"},\"date\": 1653482374,\"text\": \"\\ud14c\\uc2a4\\ud2b8 \\uba54\\uc2dc\\uc9c0\"}}]}";
+
+        mockStatusCode(200);
+        mockEntityBody(mockResponseBody);
+        // when
+        final Response<List<Update>> response = update.get(0l);
+        final List<Update> updates = response.getResult();
+
+        // then
+        assertThat(response.isOk()).isTrue();
+        assertThat(updates).size().isEqualTo(1);
+        assertThat(updates.get(0).getUpdateId()).isEqualTo(567841806);
+    }
+
+    @Test
+    @DisplayName("기본 document 대응")
+    void update_document() throws IOException {
+        String mockResponseBody = "{\"ok\": true,\"result\": [{\"update_id\": 567841807,\"message\": {\"message_id\": 2149,\"from\": {\"id\": 39327045,\"is_bot\": false,\"first_name\": \"\\uc11d\\uc9c4\",\"language_code\": \"ko\"},\"chat\": {\"id\": 39327045,\"first_name\": \"\\uc11d\\uc9c4\",\"type\": \"private\"},\"date\": 1653482399,\"document\": {\"file_name\": \"test.txt\",\"mime_type\": \"text/plain\",\"file_id\": \"BQACAgUAAxkBAAIIZWKOI5-9F9n8O1nh5Bz2m505K7qfAAI5BgACNKpwVL13NImKS4jvJAQ\",\"file_unique_id\": \"AgADOQYAAjSqcFQ\",\"file_size\": 8},\"caption\": \"send test document\"}}]}";
+
+        mockStatusCode(200);
+        mockEntityBody(mockResponseBody);
+        // when
+        final Response<List<Update>> response = update.get(0l);
+        final List<Update> updates = response.getResult();
+
+        // then
+        assertThat(response.isOk()).isTrue();
+        assertThat(updates).size().isEqualTo(1);
+        assertThat(updates.get(0).getUpdateId()).isEqualTo(567841807);
+        assertThat(updates.get(0).getMessage().getDocument().getFileName()).isEqualTo("test.txt");
+        assertThat(updates.get(0).getMessage().getCaption()).isEqualTo("send test document");
+    }
+
+    @Test
+    @DisplayName("기본 photo 대응")
+    void update_photo() throws IOException {
+        String mockResponseBody = "{\"ok\": true,\"result\": [{\"update_id\": 567841808,\"message\": {\"message_id\": 2150,\"from\": {\"id\": 39327045,\"is_bot\": false,\"first_name\": \"\\uc11d\\uc9c4\",\"language_code\": \"ko\"},\"chat\": {\"id\": 39327045,\"first_name\": \"\\uc11d\\uc9c4\",\"type\": \"private\"},\"date\": 1653482413,\"photo\": [{\"file_id\": \"AgACAgUAAxkBAAIIZmKOI6wEb4PQtzRFKkLv8fPtja6tAAJYsTEbNKpwVIdigkCEtD4HAQADAgADcwADJAQ\",\"file_unique_id\": \"AQADWLExGzSqcFR4\",\"file_size\": 1196,\"width\": 90,\"height\": 90},{\"file_id\": \"AgACAgUAAxkBAAIIZmKOI6wEb4PQtzRFKkLv8fPtja6tAAJYsTEbNKpwVIdigkCEtD4HAQADAgADbQADJAQ\",\"file_unique_id\": \"AQADWLExGzSqcFRy\",\"file_size\": 15474,\"width\": 320,\"height\": 320},{\"file_id\": \"AgACAgUAAxkBAAIIZmKOI6wEb4PQtzRFKkLv8fPtja6tAAJYsTEbNKpwVIdigkCEtD4HAQADAgADeAADJAQ\",\"file_unique_id\": \"AQADWLExGzSqcFR9\",\"file_size\": 52057,\"width\": 800,\"height\": 800},{\"file_id\": \"AgACAgUAAxkBAAIIZmKOI6wEb4PQtzRFKkLv8fPtja6tAAJYsTEbNKpwVIdigkCEtD4HAQADAgADeQADJAQ\",\"file_unique_id\": \"AQADWLExGzSqcFR-\",\"file_size\": 70180,\"width\": 1280,\"height\": 1280}],\"caption\": \"photo test\"}}]}";
+
+        mockStatusCode(200);
+        mockEntityBody(mockResponseBody);
+        // when
+        final Response<List<Update>> response = update.get(0l);
+        final List<Update> updates = response.getResult();
+
+        // then
+        assertThat(response.isOk()).isTrue();
+        assertThat(updates).size().isEqualTo(1);
+        assertThat(updates.get(0).getUpdateId()).isEqualTo(567841808);
+        assertThat(updates.get(0).getMessage().getPhoto().get(0).getHeight()).isEqualTo(90);
+        assertThat(updates.get(0).getMessage().getPhoto().get(0).getFileSize()).isEqualTo(1196);
+    }
+
     @Test
     @DisplayName("빈 updates")
     void update_empty() throws IOException {
