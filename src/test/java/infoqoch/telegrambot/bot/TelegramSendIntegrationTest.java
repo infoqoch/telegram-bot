@@ -1,11 +1,12 @@
 package infoqoch.telegrambot.bot;
 
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
-import infoqoch.telegrambot.bot.entity.DocumentResult;
+import infoqoch.telegrambot.bot.response.SendDocumentResponse;
 import infoqoch.telegrambot.bot.entity.Message;
 import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.request.SendDocumentRequest;
 import infoqoch.telegrambot.bot.request.SendMessageRequest;
+import infoqoch.telegrambot.bot.response.SendMessageResponse;
 import infoqoch.telegrambot.util.DefaultJsonBind;
 import infoqoch.telegrambot.util.MarkdownStringBuilder;
 import org.apache.http.client.HttpClient;
@@ -34,7 +35,7 @@ class TelegramSendIntegrationTest {
     @Test
     @DisplayName("기본적인 document 보내기")
     void send_document(){
-        final Response<DocumentResult> response = send.document(new SendDocumentRequest(39327045, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", "샘플 파일"));
+        final Response<SendDocumentResponse> response = send.document(new SendDocumentRequest(39327045, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", "샘플 파일"));
 
         assertThat(response.isOk()).isTrue();
         assertThat(response.getResult().getDocument().getMimeType()).isEqualTo("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -47,7 +48,7 @@ class TelegramSendIntegrationTest {
     @Test
     @DisplayName("document 보내기 + 마크다운")
     void send_document_markdown(){
-        final Response<DocumentResult> response = send.document(new SendDocumentRequest(39327045, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", new MarkdownStringBuilder().italic("이탈릭메시지!")));
+        final Response<SendDocumentResponse> response = send.document(new SendDocumentRequest(39327045, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", new MarkdownStringBuilder().italic("이탈릭메시지!")));
 
         assertThat(response.isOk()).isTrue();
 
@@ -63,7 +64,7 @@ class TelegramSendIntegrationTest {
     @Test
     @DisplayName("기본적인 메시지 보내기")
     void send_message(){
-        final Response<Message> response = send.message(new SendMessageRequest(39327045, "hi, 반가반가"));
+        final Response<SendMessageResponse> response = send.message(new SendMessageRequest(39327045, "hi, 반가반가"));
 
         assertThat(response.isOk()).isTrue();
 
@@ -77,7 +78,7 @@ class TelegramSendIntegrationTest {
         MarkdownStringBuilder msb = new MarkdownStringBuilder().plain("hi!").lineSeparator().italic("italic!").lineSeparator().code("while(true) beHappy(); ");
 
         // when
-        final Response<Message> response = send.message(new SendMessageRequest(39327045, msb));
+        final Response<SendMessageResponse> response = send.message(new SendMessageRequest(39327045, msb));
 
         assertThat(response.isOk()).isTrue();
         assertThat(response.getResult().getText()).isEqualTo("hi!\nitalic!\nwhile(true) beHappy();");
@@ -108,7 +109,7 @@ class TelegramSendIntegrationTest {
                 .plain("<h3>코드블럭!</h3>").lineSeparator()
                 .command("search", "abc 123");
 
-        final Response<Message> response = send.message(new SendMessageRequest(39327045, msb));
+        final Response<SendMessageResponse> response = send.message(new SendMessageRequest(39327045, msb));
 
         assertThat(response.isOk()).isTrue();
         assertThat(response.getResult().getText()).isEqualTo("흘림글씨야\n" +

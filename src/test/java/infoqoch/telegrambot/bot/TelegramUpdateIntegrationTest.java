@@ -29,7 +29,7 @@ class TelegramUpdateIntegrationTest {
 
     //
     @Test
-    // @Disabled("update 메시지가 없으면 기다리다가 종료된다. 테스트에 유의해야 함.")
+    @Disabled("update 메시지가 없으면 기다리다가 종료된다. 테스트에 유의해야 함.")
     void get_updates(){
         final Response<List<Update>> listResponse = update.get(0l);
         System.out.println("listResponse = " + listResponse);
