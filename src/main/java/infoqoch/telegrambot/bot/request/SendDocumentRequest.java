@@ -13,14 +13,14 @@ public class SendDocumentRequest {
     private final String caption;
     private final String parseMode;
 
-    public SendDocumentRequest(long chatId, String documentFileId, MarkdownStringBuilder msb) {
+    public SendDocumentRequest(long chatId, String document, MarkdownStringBuilder msb) {
         this.chatId = chatId;
-        this.document = documentFileId;
+        this.document = document;
         this.caption = msb.text();
         this.parseMode = msb.parseMode();
     }
 
-    public SendDocumentRequest(long chatId, String documentFileId, String beforeEscapeCaption) {
-        this(chatId, documentFileId, new MarkdownStringBuilder().plain(beforeEscapeCaption));
+    public SendDocumentRequest(long chatId, String document, String beforeEscapeCaption) {
+        this(chatId, document, new MarkdownStringBuilder().plain(beforeEscapeCaption));
     }
 }
