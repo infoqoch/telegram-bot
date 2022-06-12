@@ -1,12 +1,12 @@
 package infoqoch.telegrambot.bot;
 
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
-import infoqoch.telegrambot.bot.entity.DocumentResult;
-import infoqoch.telegrambot.bot.entity.Message;
 import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.request.SendDocumentRequest;
 import infoqoch.telegrambot.bot.request.SendMessageRequest;
 import infoqoch.telegrambot.bot.response.HttpResponseWrapper;
+import infoqoch.telegrambot.bot.response.SendDocumentResponse;
+import infoqoch.telegrambot.bot.response.SendMessageResponse;
 import infoqoch.telegrambot.util.JsonBind;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,15 +27,15 @@ public class DefaultTelegramSend implements TelegramSend {
     private JsonBind jsonBind;
 
     @Override
-    public Response<Message> message(SendMessageRequest request) {
+    public Response<SendMessageResponse> message(SendMessageRequest request) {
         final HttpResponseWrapper response = execute(properties.getUrl().getSendMessage(), jsonBind.toJson(request));
-        return jsonBind.toObject(response.toJson(), Message.class);
+        return jsonBind.toObject(response.toJson(), SendMessageResponse.class);
     }
 
     @Override
-    public Response<DocumentResult> document(SendDocumentRequest request) {
+    public Response<SendDocumentResponse> document(SendDocumentRequest request) {
         final HttpResponseWrapper response = execute(properties.getUrl().getSendDocument(), jsonBind.toJson(request));
-        return jsonBind.toObject(response.toJson(), DocumentResult.class);
+        return jsonBind.toObject(response.toJson(), SendDocumentResponse.class);
     }
 
     HttpResponseWrapper execute(String url, String contentBody) {
