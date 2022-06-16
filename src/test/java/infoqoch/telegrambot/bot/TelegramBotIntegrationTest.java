@@ -1,7 +1,6 @@
 package infoqoch.telegrambot.bot;
 
 import infoqoch.telegrambot.bot.entity.FilePath;
-import infoqoch.telegrambot.bot.entity.Message;
 import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.request.FilePathRequest;
 import infoqoch.telegrambot.bot.request.SendMessageRequest;

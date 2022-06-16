@@ -1,7 +1,5 @@
 package infoqoch.telegrambot.util;
 
-import java.util.regex.Pattern;
-
 public class MarkdownStringBuilder {
     private final StringBuilder sb = new StringBuilder();
 
