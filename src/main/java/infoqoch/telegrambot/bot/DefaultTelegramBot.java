@@ -29,4 +29,17 @@ public class DefaultTelegramBot implements TelegramBot {
     public TelegramFile file() {
         return new DefaultTelegramFile(httpClient, properties, jsonBind);
     }
+
+    @Override
+    public TelegramBotProperties.Url url() {
+        return TelegramBotProperties.Url.builder()
+                .base(properties.getUrl().getBase())
+                .sendMessage(properties.getUrl().getSendMessage())
+                .sendDocument(properties.getUrl().getSendDocument())
+                .getUpdate(properties.getUrl().getGetUpdate())
+                .document(properties.getUrl().getDocument())
+                .getFile(properties.getUrl().getFile())
+                .file(properties.getUrl().getFile())
+                .build();
+    }
 }
