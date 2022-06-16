@@ -16,6 +16,7 @@ public class Message {
 	private Chat chat;
 	private Document document;
 	private List<Entities> entities;
+	private List<Entities> captionEntities;
 	private String caption;
 	private List<Photo> photo;
 }
