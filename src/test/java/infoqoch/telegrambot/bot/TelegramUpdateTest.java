@@ -110,6 +110,26 @@ class TelegramUpdateTest {
     }
 
     @Test
+    @DisplayName("document + caption_entities 대응")
+    void update_document_entities() throws IOException {
+        String mockResponseBody = "{\"ok\":true,\"result\":[{\"update_id\":567841833,\n" +
+                "\"message\":{\"message_id\":2201,\"from\":{\"id\":39327045,\"is_bot\":false,\"first_name\":\"\\uc11d\\uc9c4\",\"language_code\":\"ko\"},\"chat\":{\"id\":39327045,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1655388392,\"document\":{\"file_name\":\"sample.xlsx\",\"mime_type\":\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\",\"file_id\":\"BQACAgUAAxkBAAIImWKrOOjwoQFB-7HvkMXy4RP96xaEAAK8BQACVctYVSkAAdvHe7WJRCQE\",\"file_unique_id\":\"AgADvAUAAlXLWFU\",\"file_size\":18768},\"caption\":\"/excel_push\",\"caption_entities\":[{\"offset\":0,\"length\":11,\"type\":\"bot_command\"}]}}]}";
+
+        mockStatusCode(200);
+        mockEntityBody(mockResponseBody);
+        // when
+        final Response<List<Update>> response = update.get(0l);
+        final List<Update> updates = response.getResult();
+
+        // then
+        assertThat(response.isOk()).isTrue();
+        assertThat(updates).size().isEqualTo(1);
+        assertThat(updates.get(0).getUpdateId()).isEqualTo(567841833);
+        assertThat(updates.get(0).getMessage().getDocument().getFileName()).isEqualTo("sample.xlsx");
+        assertThat(updates.get(0).getMessage().getCaptionEntities().get(0).getType()).isEqualTo("bot_command");
+    }
+
+    @Test
     @DisplayName("기본 photo 대응")
     void update_photo() throws IOException {
         String mockResponseBody = "{\"ok\": true,\"result\": [{\"update_id\": 567841808,\"message\": {\"message_id\": 2150,\"from\": {\"id\": 39327045,\"is_bot\": false,\"first_name\": \"\\uc11d\\uc9c4\",\"language_code\": \"ko\"},\"chat\": {\"id\": 39327045,\"first_name\": \"\\uc11d\\uc9c4\",\"type\": \"private\"},\"date\": 1653482413,\"photo\": [{\"file_id\": \"AgACAgUAAxkBAAIIZmKOI6wEb4PQtzRFKkLv8fPtja6tAAJYsTEbNKpwVIdigkCEtD4HAQADAgADcwADJAQ\",\"file_unique_id\": \"AQADWLExGzSqcFR4\",\"file_size\": 1196,\"width\": 90,\"height\": 90},{\"file_id\": \"AgACAgUAAxkBAAIIZmKOI6wEb4PQtzRFKkLv8fPtja6tAAJYsTEbNKpwVIdigkCEtD4HAQADAgADbQADJAQ\",\"file_unique_id\": \"AQADWLExGzSqcFRy\",\"file_size\": 15474,\"width\": 320,\"height\": 320},{\"file_id\": \"AgACAgUAAxkBAAIIZmKOI6wEb4PQtzRFKkLv8fPtja6tAAJYsTEbNKpwVIdigkCEtD4HAQADAgADeAADJAQ\",\"file_unique_id\": \"AQADWLExGzSqcFR9\",\"file_size\": 52057,\"width\": 800,\"height\": 800},{\"file_id\": \"AgACAgUAAxkBAAIIZmKOI6wEb4PQtzRFKkLv8fPtja6tAAJYsTEbNKpwVIdigkCEtD4HAQADAgADeQADJAQ\",\"file_unique_id\": \"AQADWLExGzSqcFR-\",\"file_size\": 70180,\"width\": 1280,\"height\": 1280}],\"caption\": \"photo test\"}}]}";

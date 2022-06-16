@@ -29,7 +29,7 @@ public class HttpResponseWrapper {
     public String toJson() {
         try {
             final String responseBody = EntityUtils.toString(response.getEntity());
-            log.debug("response content body : {}", responseBody);
+            log.info("response content body : {}", responseBody);
             return responseBody;
         } catch (IOException e) {
             throw new IllegalStateException(e);
