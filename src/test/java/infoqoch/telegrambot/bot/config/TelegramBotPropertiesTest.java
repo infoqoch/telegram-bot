@@ -1,6 +1,7 @@
 package infoqoch.telegrambot.bot.config;
 
-import org.junit.jupiter.api.Disabled;
+import infoqoch.telegrambot.bot.DefaultTelegramBotFactory;
+import infoqoch.telegrambot.bot.TelegramBot;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,12 +14,11 @@ class TelegramBotPropertiesTest {
         assertThat(properties.getUrl().getSendMessage()).isEqualTo("https://api.telegram.org/bot@test_token/sendMessage");
     }
 
-    @Disabled
     @Test
-    void get_resource_properties(){
-        // TODO yaml 고민
-//        final TelegramBotProperties properties = TelegramBotProperties.yamlProperties("test.yaml");
-//        assertThat(properties.getUrl().getSendMessage()).isEqualTo("test send message url");
+    void get_properties_out_of_bot(){
+        TelegramBot bot =  DefaultTelegramBotFactory.init("@test_token");
+        final TelegramBotProperties properties = TelegramBotProperties.defaultProperties("@test_token");
+        assertThat(bot.url().getSendMessage()).isEqualTo(properties.getUrl().getSendMessage());
     }
 
 }
