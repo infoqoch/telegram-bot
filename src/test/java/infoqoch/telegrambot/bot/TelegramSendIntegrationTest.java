@@ -1,11 +1,10 @@
 package infoqoch.telegrambot.bot;
 
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
-import infoqoch.telegrambot.bot.response.SendDocumentResponse;
-import infoqoch.telegrambot.bot.entity.Message;
 import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.request.SendDocumentRequest;
 import infoqoch.telegrambot.bot.request.SendMessageRequest;
+import infoqoch.telegrambot.bot.response.SendDocumentResponse;
 import infoqoch.telegrambot.bot.response.SendMessageResponse;
 import infoqoch.telegrambot.util.DefaultJsonBind;
 import infoqoch.telegrambot.util.MarkdownStringBuilder;
