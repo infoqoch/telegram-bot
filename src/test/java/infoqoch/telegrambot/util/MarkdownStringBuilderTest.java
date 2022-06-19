@@ -18,6 +18,7 @@ public class MarkdownStringBuilderTest {
         assertThat(new MarkdownStringBuilder().lineSeparator().toString()).isEqualTo(System.lineSeparator());
         assertThat(new MarkdownStringBuilder().plain("<h3>코드블럭!</h3>").toString()).isEqualTo("\\<h3\\>코드블럭\\!\\<\\/h3\\>");
         assertThat(new MarkdownStringBuilder().command("조회","abc 123").toString()).isEqualTo("/조회\\_abc\\_123");
+        assertThat(new MarkdownStringBuilder().plain("나는 무엇(을)를 하였다.").toString()).isEqualTo("나는 무엇\\(을\\)를 하였다\\.");
     }
 
     @Test
@@ -25,4 +26,11 @@ public class MarkdownStringBuilderTest {
         final String actual = new MarkdownStringBuilder().italic("이탈릭가자!").lineSeparator().url("가자", "https://naver.com").toString();
         assertThat(actual).isEqualTo("_이탈릭가자\\!_"+System.lineSeparator()+"[가자](https://naver.com)");
     }
+
+    @Test
+    void tests(){
+        final MarkdownStringBuilder plain = new MarkdownStringBuilder().plain("나는 무엇(을)를 하였다.");
+        System.out.println("plain = " + plain);
+    }
+
 }
