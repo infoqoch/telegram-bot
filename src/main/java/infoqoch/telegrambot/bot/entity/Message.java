@@ -19,5 +19,7 @@ public class Message {
 	private List<Entities> captionEntities;
 	private String caption;
 	private List<Photo> photo;
+	private Instant forwardDate;
+	private From forwardFrom;
 }
 
