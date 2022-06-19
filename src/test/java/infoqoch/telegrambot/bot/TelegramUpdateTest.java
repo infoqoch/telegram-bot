@@ -17,6 +17,7 @@ import org.mockito.stubbing.OngoingStubbing;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,6 +73,26 @@ class TelegramUpdateTest {
         assertThat(updates.get(0).getUpdateId()).isEqualTo(567841804);
     }
 
+    @Test
+    @DisplayName("forward 전달 대응")
+    void update_forward() throws IOException {
+        // given
+        String mockResponseBody = "{\"ok\":true,\"result\":[{\"update_id\":567841840,\n" +
+                "\"message\":{\"message_id\":2215,\"from\":{\"id\":39327045,\"is_bot\":false,\"first_name\":\"\\uc11d\\uc9c4\",\"language_code\":\"ko\"},\"chat\":{\"id\":39327045,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1655610194,\"forward_from\":{\"id\":39327045,\"is_bot\":false,\"first_name\":\"\\uc11d\\uc9c4\",\"language_code\":\"ko\"},\"forward_date\":1655609857,\"document\":{\"file_name\":\"sample.xlsx\",\"mime_type\":\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\",\"file_id\":\"BQACAgUAAxkBAAIIp2Kum1LQM_36uaRAICjl6W2YiO32AAJfBwACp4hwVfwoRa98qZu7JAQ\",\"file_unique_id\":\"AgADXwcAAqeIcFU\",\"file_size\":18768},\"caption\":\"excel push\"}}]}";
+
+        mockStatusCode(200);
+        mockEntityBody(mockResponseBody);
+
+        // when
+        final Response<List<Update>> response = update.get(0l);
+        final List<Update> updates = response.getResult();
+
+        // then
+        assertThat(response.isOk()).isTrue();
+        assertThat(updates).size().isEqualTo(1);
+        assertThat(updates.get(0).getMessage().getForwardDate()).isBefore(Instant.now());
+        assertThat(updates.get(0).getMessage().getForwardFrom()).isNotNull();
+    }
 
     @Test
     @DisplayName("기본 message 대응")
@@ -168,7 +189,7 @@ class TelegramUpdateTest {
     private OngoingStubbing<Integer> mockStatusCode(int statusCode) {return when(statusLine.getStatusCode()).thenReturn(statusCode);
     }
 
-    private OngoingStubbing<InputStream> mockEntityBody(String responseEntitContent) throws IOException {
-        return when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(responseEntitContent.getBytes()));
+    private OngoingStubbing<InputStream> mockEntityBody(String responseEntityContent) throws IOException {
+        return when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(responseEntityContent.getBytes()));
     }
 }
