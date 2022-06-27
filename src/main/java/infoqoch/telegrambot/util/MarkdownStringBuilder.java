@@ -12,9 +12,9 @@ public class MarkdownStringBuilder {
         return toString();
     }
 
-    private void valid() {
-        if(sb.length()==0)
-            throw new IllegalArgumentException("append message greater than 0");
+    public MarkdownStringBuilder append(MarkdownStringBuilder msb) {
+        sb.append(msb.toString());
+        return this;
     }
 
     public MarkdownStringBuilder plain(String str) {
@@ -87,5 +87,10 @@ public class MarkdownStringBuilder {
     @Override
     public String toString() {
         return sb.toString();
+    }
+
+    private void valid() {
+        if(sb.length()==0)
+            throw new IllegalArgumentException("append message greater than 0");
     }
 }
