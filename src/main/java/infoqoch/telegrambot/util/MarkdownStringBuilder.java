@@ -3,6 +3,13 @@ package infoqoch.telegrambot.util;
 public class MarkdownStringBuilder {
     private final StringBuilder sb = new StringBuilder();
 
+    public MarkdownStringBuilder() {
+    }
+
+    public MarkdownStringBuilder(String plain) {
+        plain(plain);
+    }
+
     public String parseMode() {
         return "MarkdownV2";
     }
@@ -13,7 +20,9 @@ public class MarkdownStringBuilder {
     }
 
     public MarkdownStringBuilder append(MarkdownStringBuilder msb) {
-        sb.append(msb.toString());
+        if(msb==null) return this;
+
+        sb.append(msb);
         return this;
     }
 

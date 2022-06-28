@@ -28,4 +28,10 @@ public class MarkdownStringBuilderTest {
         final MarkdownStringBuilder msb2 = new MarkdownStringBuilder().append(msb1).plain("!!");
         assertThat(msb2.toString()).isEqualTo("반갑습니다\\.\\!\\!");
     }
+
+    @Test
+    void constructor(){
+        final MarkdownStringBuilder msb = new MarkdownStringBuilder("반갑습니다.");
+        assertThat(msb.toString()).isEqualTo("반갑습니다\\.");
+    }
 }
