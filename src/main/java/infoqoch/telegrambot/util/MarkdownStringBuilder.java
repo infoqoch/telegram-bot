@@ -99,7 +99,11 @@ public class MarkdownStringBuilder {
     }
 
     private void valid() {
-        if(sb.length()==0)
-            throw new IllegalArgumentException("append message greater than 0");
+        if(sb.length() == 0)
+            throw new IllegalArgumentException("string length should be greater than 0");
+    }
+
+    public int size() {
+        return sb.length();
     }
 }
