@@ -77,7 +77,7 @@ class TelegramSendTest {
         assertThatThrownBy(()->{
             send.message(new SendMessageRequest(YOUR_CHAT_ID, ""));
         }).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("append message greater than 0");
+                .hasMessageContaining("string length should be greater than 0");
     }
 
     @Test
