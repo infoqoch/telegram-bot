@@ -69,6 +69,12 @@ public class MarkdownStringBuilder {
         return this;
     }
 
+    public MarkdownStringBuilder notEscapedTest(String text) throws NotEscapedMSBException{
+        sb.append(text);
+        return this;
+    }
+
+
     private String escape(String str) {
         str = str.replaceAll("[_]", "\\\\_");
         str = str.replaceAll("[\\*]", "\\\\*");
