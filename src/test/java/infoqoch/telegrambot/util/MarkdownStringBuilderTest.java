@@ -34,4 +34,15 @@ public class MarkdownStringBuilderTest {
         final MarkdownStringBuilder msb = new MarkdownStringBuilder("반갑습니다.");
         assertThat(msb.toString()).isEqualTo("반갑습니다\\.");
     }
+
+    @Test
+    void notEscapedTest(){
+        try{
+            final MarkdownStringBuilder msb = new MarkdownStringBuilder().notEscapedTest("<h2>hi!</h2>");
+            assertThat(msb.toString()).isEqualTo("<h2>hi!</h2>");
+        }catch (NotEscapedMSBException e){
+
+        }
+
+    }
 }
