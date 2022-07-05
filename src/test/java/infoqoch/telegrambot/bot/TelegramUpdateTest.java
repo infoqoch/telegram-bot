@@ -95,6 +95,29 @@ class TelegramUpdateTest {
     }
 
     @Test
+    @DisplayName("reply 전달 대응")
+    void update_reply() throws IOException {
+        // given
+        String mockResponseBody = "{\"ok\":true,\"result\":[{\"update_id\":567841901,\n" +
+                "    \"message\":{\"message_id\":2375,\"from\":{\"id\":39327045,\"is_bot\":false,\"first_name\":\"\\uc11d\\uc9c4\",\"language_code\":\"ko\"},\"chat\":{\"id\":39327045,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1657031357,\"reply_to_message\":{\"message_id\":2372,\"from\":{\"id\":39327045,\"is_bot\":false,\"first_name\":\"\\uc11d\\uc9c4\",\"language_code\":\"ko\"},\"chat\":{\"id\":39327045,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1657031087,\"forward_from\":{\"id\":1959903402,\"is_bot\":true,\"first_name\":\"coffs_test\",\"username\":\"coffs_dic_test_bot\"},\"forward_date\":1656700053,\"document\":{\"file_name\":\"sample.xlsx\",\"mime_type\":\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\",\"file_id\":\"BQACAgUAAxkBAAIJRGLESa_ZSHj1tJ2AyAwvFVYj-hDKAAL_BAACg56JVdF3guuN7A6tKQQ\",\"file_unique_id\":\"AgAD_wQAAoOeiVU\",\"file_size\":26440},\"caption\":\"\\uc774\\ud0c8\\ub9ad\\uba54\\uc2dc\\uc9c0!\",\"caption_entities\":[{\"offset\":0,\"length\":7,\"type\":\"italic\"}]},\"text\":\"excel push\"}}]}";
+
+        mockStatusCode(200);
+        mockEntityBody(mockResponseBody);
+
+        // when
+        final Response<List<Update>> response = update.get(0l);
+        final List<Update> updates = response.getResult();
+
+        // then
+        assertThat(response.isOk()).isTrue();
+        assertThat(updates).size().isEqualTo(1);
+        assertThat(updates.get(0).getMessage().getText()).isEqualTo("excel push");
+        assertThat(updates.get(0).getMessage().getReplyToMessage().getForwardFrom()).isNotNull();
+        assertThat(updates.get(0).getMessage().getReplyToMessage().getCaption()).isEqualTo("이탈릭메시지!");
+    }
+
+
+    @Test
     @DisplayName("기본 message 대응")
     void update_plain_chat_message() throws IOException {
         String mockResponseBody = "{\"ok\": true,\"result\": [{\"update_id\": 567841806,\"message\": {\"message_id\": 2148,\"from\": {\"id\": 39327045,\"is_bot\": false,\"first_name\": \"\\uc11d\\uc9c4\",\"language_code\": \"ko\"},\"chat\": {\"id\": 39327045,\"first_name\": \"\\uc11d\\uc9c4\",\"type\": \"private\"},\"date\": 1653482374,\"text\": \"\\ud14c\\uc2a4\\ud2b8 \\uba54\\uc2dc\\uc9c0\"}}]}";

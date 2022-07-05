@@ -21,5 +21,6 @@ public class Message {
 	private List<Photo> photo;
 	private Instant forwardDate;
 	private From forwardFrom;
+	private Message replyToMessage;
 }
 
