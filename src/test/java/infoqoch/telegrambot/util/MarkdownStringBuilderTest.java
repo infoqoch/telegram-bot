@@ -41,8 +41,13 @@ public class MarkdownStringBuilderTest {
             final MarkdownStringBuilder msb = new MarkdownStringBuilder().notEscapedTest("<h2>hi!</h2>");
             assertThat(msb.toString()).isEqualTo("<h2>hi!</h2>");
         }catch (NotEscapedMSBException e){
-
+            throw new IllegalArgumentException(e);
         }
-
     }
+
+    @Test
+    void command_split_space(){
+        assertThat(new MarkdownStringBuilder().command("share mine", "Y").text()).isEqualTo("/share\\_mine\\_Y");
+    }
+
 }
