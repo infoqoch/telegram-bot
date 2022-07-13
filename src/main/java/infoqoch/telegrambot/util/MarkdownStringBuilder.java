@@ -65,15 +65,18 @@ public class MarkdownStringBuilder {
     }
 
     public MarkdownStringBuilder command(String command, String value) {
-        sb.append("/").append(escape(command)).append("\\_").append(escape(value.replace(" ", "_")));
+        sb.append("/").append(escape(spaceToUnderscore(command))).append("\\_").append(escape(value.replace(" ", "_")));
         return this;
+    }
+
+    private String spaceToUnderscore(String text) {
+        return text.replaceAll(" ", "_");
     }
 
     public MarkdownStringBuilder notEscapedTest(String text) throws NotEscapedMSBException{
         sb.append(text);
         return this;
     }
-
 
     private String escape(String str) {
         str = str.replaceAll("[_]", "\\\\_");
