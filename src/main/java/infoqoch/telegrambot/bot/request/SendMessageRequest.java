@@ -13,7 +13,7 @@ public class SendMessageRequest {
 
     public SendMessageRequest(long chatId, MarkdownStringBuilder msb) {
         this.chatId = chatId;
-        this.text = msb.text();
+        this.text = msb.toString();
         this.parseMode = msb.parseMode();
     }
 

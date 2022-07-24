@@ -16,7 +16,7 @@ public class SendDocumentRequest {
     public SendDocumentRequest(long chatId, String document, MarkdownStringBuilder msb) {
         this.chatId = chatId;
         this.document = document;
-        this.caption = msb.text();
+        this.caption = msb.toString();
         this.parseMode = msb.parseMode();
     }
 
