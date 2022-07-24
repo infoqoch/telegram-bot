@@ -38,7 +38,7 @@ public class MarkdownStringBuilderTest {
     @Test
     void notEscapedTest(){
         try{
-            final MarkdownStringBuilder msb = new MarkdownStringBuilder().notEscapedTest("<h2>hi!</h2>");
+            final MarkdownStringBuilder msb = new MarkdownStringBuilder().notEscapedText("<h2>hi!</h2>");
             assertThat(msb.toString()).isEqualTo("<h2>hi!</h2>");
         }catch (NotEscapedMSBException e){
             throw new IllegalArgumentException(e);
@@ -47,7 +47,13 @@ public class MarkdownStringBuilderTest {
 
     @Test
     void command_split_space(){
-        assertThat(new MarkdownStringBuilder().command("share mine", "Y").text()).isEqualTo("/share\\_mine\\_Y");
+        assertThat(new MarkdownStringBuilder().command("share mine", "Y").toString()).isEqualTo("/share\\_mine\\_Y");
     }
 
+    @Test
+    void input_empty_string(){
+        assertThat(new MarkdownStringBuilder("hi, ").italic("kim").toString()).isEqualTo(new MarkdownStringBuilder("hi, ").italic("kim").toString());
+        assertThat(new MarkdownStringBuilder("hi, ").italic(null).toString()).isEqualTo(new MarkdownStringBuilder("hi, ").toString());
+        assertThat(new MarkdownStringBuilder("hi, ").italic("").toString()).isEqualTo(new MarkdownStringBuilder("hi, ").toString());
+    }
 }

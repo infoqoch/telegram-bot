@@ -3,8 +3,7 @@ package infoqoch.telegrambot.util;
 public class MarkdownStringBuilder {
     private final StringBuilder sb = new StringBuilder();
 
-    public MarkdownStringBuilder() {
-    }
+    public MarkdownStringBuilder() {}
 
     public MarkdownStringBuilder(String plain) {
         plain(plain);
@@ -12,11 +11,6 @@ public class MarkdownStringBuilder {
 
     public String parseMode() {
         return "MarkdownV2";
-    }
-
-    public String text() {
-        valid();
-        return toString();
     }
 
     public MarkdownStringBuilder append(MarkdownStringBuilder msb) {
@@ -30,31 +24,39 @@ public class MarkdownStringBuilder {
         sb.append(escape(str));
         return this;
     }
+
     public MarkdownStringBuilder italic(String str) {
+        if(isEmpty(str)) return this;
         sb.append("_").append(escape(str)).append("_");
         return this;
     }
+
     public MarkdownStringBuilder underline(String str) {
+        if(isEmpty(str)) return this;
         sb.append("__").append(escape(str)).append("__");
         return this;
     }
 
     public MarkdownStringBuilder bold(String str) {
+        if(isEmpty(str)) return this;
         sb.append("*").append(escape(str)).append("*");
         return this;
     }
 
     public MarkdownStringBuilder strikethrough(String str) {
+        if(isEmpty(str)) return this;
         sb.append("~").append(escape(str)).append("~");
         return this;
     }
 
     public MarkdownStringBuilder code(String str) {
+        if(isEmpty(str)) return this;
         sb.append("`").append(escape(str)).append("`");
         return this;
     }
 
     public MarkdownStringBuilder url(String text, String url) {
+        if(isEmpty(text)||isEmpty(url)) return this;
         sb.append("[").append(escape(text)).append("](").append(url).append(")");
         return this;
     }
@@ -65,17 +67,25 @@ public class MarkdownStringBuilder {
     }
 
     public MarkdownStringBuilder command(String command, String value) {
+        if(isEmpty(command)||isEmpty(value)) return this;
         sb.append("/").append(escape(spaceToUnderscore(command))).append("\\_").append(escape(value.replace(" ", "_")));
         return this;
     }
 
-    private String spaceToUnderscore(String text) {
-        return text.replaceAll(" ", "_");
-    }
-
-    public MarkdownStringBuilder notEscapedTest(String text) throws NotEscapedMSBException{
+    public MarkdownStringBuilder notEscapedText(String text) throws NotEscapedMSBException{
         sb.append(text);
         return this;
+    }
+
+    public int size() {
+        return sb.length();
+    }
+
+    // null을 허용하지 않음.
+    @Override
+    public String toString() {
+        valid();
+        return sb.toString();
     }
 
     private String escape(String str) {
@@ -102,17 +112,16 @@ public class MarkdownStringBuilder {
         return str;
     }
 
-    @Override
-    public String toString() {
-        return sb.toString();
-    }
-
     private void valid() {
         if(sb.length() == 0)
             throw new IllegalArgumentException("string length should be greater than 0");
     }
 
-    public int size() {
-        return sb.length();
+    private String spaceToUnderscore(String text) {
+        return text.replaceAll(" ", "_");
+    }
+
+    private boolean isEmpty(String str) {
+        return str == null || str.length() == 0;
     }
 }
