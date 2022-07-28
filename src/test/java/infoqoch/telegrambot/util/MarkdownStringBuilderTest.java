@@ -3,6 +3,7 @@ package infoqoch.telegrambot.util;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MarkdownStringBuilderTest {
     @Test
@@ -55,5 +56,14 @@ public class MarkdownStringBuilderTest {
         assertThat(new MarkdownStringBuilder("hi, ").italic("kim").toString()).isEqualTo(new MarkdownStringBuilder("hi, ").italic("kim").toString());
         assertThat(new MarkdownStringBuilder("hi, ").italic(null).toString()).isEqualTo(new MarkdownStringBuilder("hi, ").toString());
         assertThat(new MarkdownStringBuilder("hi, ").italic("").toString()).isEqualTo(new MarkdownStringBuilder("hi, ").toString());
+    }
+
+    @Test
+    void command_empty(){
+        assertThat(new MarkdownStringBuilder().command("조회","1234").toString()).isEqualTo("/조회\\_1234");
+        assertThat(new MarkdownStringBuilder().command("조회",null).toString()).isEqualTo("/조회 ");
+        assertThatThrownBy(()->{
+            new MarkdownStringBuilder().command(null,null).toString();
+        }).isInstanceOfAny(IllegalArgumentException.class);
     }
 }
