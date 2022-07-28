@@ -67,9 +67,15 @@ public class MarkdownStringBuilder {
     }
 
     public MarkdownStringBuilder command(String command, String value) {
-        if(isEmpty(command)||isEmpty(value)) return this;
-        sb.append("/").append(escape(spaceToUnderscore(command))).append("\\_").append(escape(value.replace(" ", "_")));
-        return this;
+        if(isEmpty(command)){
+            return this;
+        }else if(isEmpty(value)){
+            sb.append("/").append(escape(spaceToUnderscore(command))).append(" ");
+            return this;
+        }else{
+            sb.append("/").append(escape(spaceToUnderscore(command))).append("\\_").append(escape(value.replace(" ", "_")));
+            return this;
+        }
     }
 
     public MarkdownStringBuilder notEscapedText(String text) throws NotEscapedMSBException{
