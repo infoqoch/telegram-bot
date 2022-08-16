@@ -65,7 +65,7 @@ public class DefaultJsonBind implements JsonBind {
         objectMapper.registerModule(simpleModule);
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-//        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); // 차후에는 사용할 수 있지만 현재는 모든 필드에 대하여 입력할 수 있도록 하자.
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); // 바인딩되지 않는 필드에 대해 무시하고 예외를 던지지 않는다.
         this.objectMapper = objectMapper;
     }
 
