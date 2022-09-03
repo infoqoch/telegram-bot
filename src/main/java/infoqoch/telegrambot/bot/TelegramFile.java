@@ -6,5 +6,4 @@ import infoqoch.telegrambot.bot.request.FilePathRequest;
 
 public interface TelegramFile {
     Response<FilePath> path(FilePathRequest request);
-//    void byUrl();
 }

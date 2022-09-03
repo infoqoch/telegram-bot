@@ -31,17 +31,6 @@ public class DefaultTelegramFile implements TelegramFile {
         return jsonBind.toObject(response.toJson(), FilePath.class);
     }
 
-//    public Response<Message> message(SendMessageRequest request) {
-//        final HttpResponseWrapper response = execute(properties.getUrl().getSendMessage(), jsonBind.toJson(request));
-//        return jsonBind.toObject(response.toJson(), Message.class);
-//    }
-
-//    @Override
-//    public Response<DocumentResult> document(SendDocumentRequest request) {
-//        final HttpResponseWrapper response = execute(properties.getUrl().getSendDocument(), jsonBind.toJson(request));
-//        return jsonBind.toObject(response.toJson(), DocumentResult.class);
-//    }
-
     HttpResponseWrapper execute(String url, String contentBody) {
         try {
             return HttpResponseWrapper.wrap(httpClient.execute(generateHttpPost(url, contentBody)));
