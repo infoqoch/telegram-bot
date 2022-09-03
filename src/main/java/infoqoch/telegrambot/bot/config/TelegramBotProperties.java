@@ -23,7 +23,7 @@ public class TelegramBotProperties {
                 .getFile(baseUrl + "/getFile")
                 .file("https://api.telegram.org/file/bot" + token)
                 .build();
-        return new TelegramBotProperties(url, 600);
+        return new TelegramBotProperties(url, 60);
     }
 
     @Getter
