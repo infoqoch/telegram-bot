@@ -1,5 +1,7 @@
 package infoqoch.telegrambot.bot;
 
+import infoqoch.telegrambot.IntegrationTest;
+import infoqoch.telegrambot.PropertiesUtil;
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
 import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.request.SendDocumentRequest;
@@ -14,20 +16,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class TelegramSendIntegrationTest {
+@EnabledIf("isIntegrationTest")
+class TelegramSendIntegrationTest extends IntegrationTest {
     TelegramSend send;
-    private TelegramBotProperties properties;
-    private DefaultJsonBind jsonBind;
+    TelegramBotProperties properties;
+    DefaultJsonBind jsonBind;
+    String token = PropertiesUtil.getToken("test-telegram-token");
 
     @BeforeEach
     private void setUp() {
         HttpClient httpClient = HttpClients.createDefault();
         jsonBind = new DefaultJsonBind();
-        properties = TelegramBotProperties.defaultProperties("telegram-token");
+        properties = TelegramBotProperties.defaultProperties(token);
         send = new DefaultTelegramSend(httpClient, properties, jsonBind);
     }
 
@@ -155,7 +160,7 @@ class TelegramSendIntegrationTest {
     private DefaultTelegramSend getDefaultTelegramSend() {
         HttpClient httpClient = HttpClients.createDefault();
         jsonBind = new DefaultJsonBind();
-        properties = TelegramBotProperties.defaultProperties("telegram-token");
+        properties = TelegramBotProperties.defaultProperties(token);
 
         final DefaultTelegramSend send = new DefaultTelegramSend(httpClient, properties, jsonBind);
         return send;

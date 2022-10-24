@@ -1,5 +1,7 @@
 package infoqoch.telegrambot.bot;
 
+import infoqoch.telegrambot.IntegrationTest;
+import infoqoch.telegrambot.PropertiesUtil;
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
 import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.entity.Update;
@@ -9,21 +11,24 @@ import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TelegramUpdateIntegrationTest {
+@EnabledIf("isIntegrationTest")
+class TelegramUpdateIntegrationTest extends IntegrationTest {
     TelegramUpdate update;
     TelegramBotProperties properties;
     DefaultJsonBind jsonBind;
+    String token = PropertiesUtil.getToken("test-telegram-token");
 
     @BeforeEach
     private void setUp() {
         HttpClient httpClient = HttpClients.createDefault();
         jsonBind = new DefaultJsonBind();
-        properties = TelegramBotProperties.defaultProperties("telegram-token");
+        properties = TelegramBotProperties.defaultProperties(token);
         update = new DefaultTelegramUpdate(httpClient, properties, jsonBind);
     }
 

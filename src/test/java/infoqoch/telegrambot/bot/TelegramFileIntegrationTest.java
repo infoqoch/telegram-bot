@@ -1,5 +1,7 @@
 package infoqoch.telegrambot.bot;
 
+import infoqoch.telegrambot.IntegrationTest;
+import infoqoch.telegrambot.PropertiesUtil;
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
 import infoqoch.telegrambot.bot.entity.FilePath;
 import infoqoch.telegrambot.bot.entity.Response;
@@ -10,19 +12,22 @@ import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TelegramFileIntegrationTest {
+@EnabledIf("isIntegrationTest")
+public class TelegramFileIntegrationTest extends IntegrationTest {
     TelegramFile file;
-    private TelegramBotProperties properties;
-    private DefaultJsonBind jsonBind;
+    TelegramBotProperties properties;
+    DefaultJsonBind jsonBind;
+    String token = PropertiesUtil.getToken("test-telegram-token");
 
     @BeforeEach
     private void setUp() {
         HttpClient httpClient = HttpClients.createDefault();
         jsonBind = new DefaultJsonBind();
-        properties = TelegramBotProperties.defaultProperties("telegram-token");
+        properties = TelegramBotProperties.defaultProperties(token);
         file = new DefaultTelegramFile(httpClient, properties, jsonBind);
     }
 
