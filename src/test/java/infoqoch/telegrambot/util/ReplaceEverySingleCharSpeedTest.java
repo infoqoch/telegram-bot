@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ReplaceEverySingleStringSpeedTest {
+public class ReplaceEverySingleCharSpeedTest {
 
     Map<String, Integer> compareMap;
 

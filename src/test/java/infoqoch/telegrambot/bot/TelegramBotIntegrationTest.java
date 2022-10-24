@@ -1,5 +1,7 @@
 package infoqoch.telegrambot.bot;
 
+import infoqoch.telegrambot.IntegrationTest;
+import infoqoch.telegrambot.PropertiesUtil;
 import infoqoch.telegrambot.bot.entity.FilePath;
 import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.request.FilePathRequest;
@@ -8,16 +10,19 @@ import infoqoch.telegrambot.bot.response.SendMessageResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TelegramBotIntegrationTest {
+@EnabledIf("isIntegrationTest")
+public class TelegramBotIntegrationTest extends IntegrationTest {
 
-    private TelegramBot bot;
+    TelegramBot bot;
+    String token = PropertiesUtil.getToken("test-telegram-token");
 
     @BeforeEach
     private void setUp() {
-        bot =  DefaultTelegramBotFactory.init("telegram-token");
+        bot =  DefaultTelegramBotFactory.init(token);
     }
 
     @Test
