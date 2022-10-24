@@ -66,6 +66,7 @@ public class TelegramFileTest {
         assertThat(response.getResult().getFilePath().contains("documents"));
         assertThat(response.getResult().getFilePath().contains("xlsx"));
     }
+
     private OngoingStubbing<Integer> mockStatusCode(int statusCode) {return when(statusLine.getStatusCode()).thenReturn(statusCode);}
 
     private OngoingStubbing<InputStream> mockEntityBody(String responseEntityContent) throws IOException {
