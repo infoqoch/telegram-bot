@@ -6,8 +6,8 @@ import infoqoch.telegrambot.bot.config.TelegramBotProperties;
 import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.entity.Update;
 import infoqoch.telegrambot.util.DefaultJsonBind;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClients;
+import infoqoch.telegrambot.util.HttpClientHttpHandler;
+import infoqoch.telegrambot.util.HttpHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -26,13 +26,12 @@ class TelegramUpdateIntegrationTest extends IntegrationTest {
 
     @BeforeEach
     private void setUp() {
-        HttpClient httpClient = HttpClients.createDefault();
+        HttpHandler httpHandler = HttpClientHttpHandler.createDefault();
         jsonBind = new DefaultJsonBind();
         properties = TelegramBotProperties.defaultProperties(token);
-        update = new DefaultTelegramUpdate(httpClient, properties, jsonBind);
+        update = new DefaultTelegramUpdate(httpHandler, properties, jsonBind);
     }
 
-    //
     @Test
     @Disabled("update 메시지가 없으면 기다리다가 종료된다. 테스트에 유의해야 함.")
     void get_updates(){

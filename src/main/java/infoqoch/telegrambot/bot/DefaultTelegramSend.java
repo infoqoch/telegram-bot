@@ -7,6 +7,7 @@ import infoqoch.telegrambot.bot.request.SendMessageRequest;
 import infoqoch.telegrambot.bot.response.HttpResponseWrapper;
 import infoqoch.telegrambot.bot.response.SendDocumentResponse;
 import infoqoch.telegrambot.bot.response.SendMessageResponse;
+import infoqoch.telegrambot.util.HttpHandler;
 import infoqoch.telegrambot.util.JsonBind;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,12 +24,12 @@ public class DefaultTelegramSend implements TelegramSend {
     @Override
     public Response<SendMessageResponse> message(SendMessageRequest request) {
         final HttpResponseWrapper response = httpHandler.post(properties.getUrl().getSendMessage(), jsonBind.toJson(request));
-        return jsonBind.toObject(response.body(), SendMessageResponse.class);
+        return jsonBind.toObject(response.getBody(), SendMessageResponse.class);
     }
 
     @Override
     public Response<SendDocumentResponse> document(SendDocumentRequest request) {
         final HttpResponseWrapper response = httpHandler.post(properties.getUrl().getSendDocument(), jsonBind.toJson(request));
-        return jsonBind.toObject(response.body(), SendDocumentResponse.class);
+        return jsonBind.toObject(response.getBody(), SendDocumentResponse.class);
     }
 }

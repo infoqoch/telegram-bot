@@ -1,7 +1,6 @@
-package infoqoch.telegrambot.bot;
+package infoqoch.telegrambot.util;
 
 import infoqoch.telegrambot.bot.response.HttpResponseWrapper;
-import infoqoch.telegrambot.util.HttpGetParamMap;
 
 public interface HttpHandler {
     HttpResponseWrapper get(HttpGetParamMap httpGetParamMap);

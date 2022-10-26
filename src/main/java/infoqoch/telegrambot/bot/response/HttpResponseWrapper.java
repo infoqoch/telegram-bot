@@ -1,5 +1,7 @@
 package infoqoch.telegrambot.bot.response;
 
+import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -7,28 +9,27 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 
 @Slf4j
+@Getter
+@ToString
 public class HttpResponseWrapper {
-    // TODO
-    // 해당 데이터를 필드로 두면 안된다. 필요로한 필드로 다 꺼내야 한다. 이렇게 하니까 테스트 코드 작성이 너무 어렵다.
-    private final HttpResponse response;
 
-    private HttpResponseWrapper(HttpResponse response) {
-        this.response = response;
+    private final int statusCode;
+    private final String body;
+
+    private HttpResponseWrapper(int statusCode, String body) {
+        this.statusCode = statusCode;
+        this.body = body;
     }
 
-    public static HttpResponseWrapper wrap(HttpResponse response) {
-        final HttpResponseWrapper wrapper = new HttpResponseWrapper(response);
-        wrapper.valid();
-        return wrapper;
+    public static HttpResponseWrapper of(HttpResponse response) {
+        return new HttpResponseWrapper(response.getStatusLine().getStatusCode(), extractBody(response));
     }
 
-    private void valid() {
-        if(response.getStatusLine().getStatusCode() < 400) return;
-        if(response.getStatusLine().getStatusCode() < 500) throw new IllegalArgumentException(body());
-        throw new IllegalStateException(body());
+    public static HttpResponseWrapper of(int statusCode, String body) {
+        return new HttpResponseWrapper(statusCode, body);
     }
 
-    public String body() {
+    private static String extractBody(HttpResponse response) {
         try {
             final String responseBody = EntityUtils.toString(response.getEntity());
             log.debug("response content body : {}", responseBody);
@@ -37,5 +38,4 @@ public class HttpResponseWrapper {
             throw new IllegalStateException(e);
         }
     }
-
 }
