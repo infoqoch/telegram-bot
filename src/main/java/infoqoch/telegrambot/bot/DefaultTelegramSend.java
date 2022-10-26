@@ -12,43 +12,23 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-
-import java.io.IOException;
 
 @Slf4j
 @AllArgsConstructor(access = AccessLevel.PACKAGE) @Builder
 public class DefaultTelegramSend implements TelegramSend {
-    private HttpClient httpClient;
+    private HttpHandler httpHandler;
     private TelegramBotProperties properties;
     private JsonBind jsonBind;
 
     @Override
     public Response<SendMessageResponse> message(SendMessageRequest request) {
-        final HttpResponseWrapper response = execute(properties.getUrl().getSendMessage(), jsonBind.toJson(request));
-        return jsonBind.toObject(response.toJson(), SendMessageResponse.class);
+        final HttpResponseWrapper response = httpHandler.post(properties.getUrl().getSendMessage(), jsonBind.toJson(request));
+        return jsonBind.toObject(response.body(), SendMessageResponse.class);
     }
 
     @Override
     public Response<SendDocumentResponse> document(SendDocumentRequest request) {
-        final HttpResponseWrapper response = execute(properties.getUrl().getSendDocument(), jsonBind.toJson(request));
-        return jsonBind.toObject(response.toJson(), SendDocumentResponse.class);
-    }
-
-    HttpResponseWrapper execute(String url, String contentBody) {
-        try {
-            return HttpResponseWrapper.wrap(httpClient.execute(generateHttpPost(url, contentBody)));
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private HttpPost generateHttpPost(String url, String jsonString) {
-        final HttpPost httpPost = new HttpPost(url);
-        httpPost.setEntity(new StringEntity(jsonString, ContentType.APPLICATION_JSON));
-        return httpPost;
+        final HttpResponseWrapper response = httpHandler.post(properties.getUrl().getSendDocument(), jsonBind.toJson(request));
+        return jsonBind.toObject(response.body(), SendDocumentResponse.class);
     }
 }

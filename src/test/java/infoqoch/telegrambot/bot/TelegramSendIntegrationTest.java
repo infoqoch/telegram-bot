@@ -10,7 +10,6 @@ import infoqoch.telegrambot.bot.response.SendDocumentResponse;
 import infoqoch.telegrambot.bot.response.SendMessageResponse;
 import infoqoch.telegrambot.util.DefaultJsonBind;
 import infoqoch.telegrambot.util.MarkdownStringBuilder;
-import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -30,10 +29,11 @@ class TelegramSendIntegrationTest extends IntegrationTest {
 
     @BeforeEach
     private void setUp() {
-        HttpClient httpClient = HttpClients.createDefault();
+
+        HttpHandler httpHandler = new HttpClientHttpHandler(HttpClients.createDefault());
         jsonBind = new DefaultJsonBind();
         properties = TelegramBotProperties.defaultProperties(token);
-        send = new DefaultTelegramSend(httpClient, properties, jsonBind);
+        send = new DefaultTelegramSend(httpHandler, properties, jsonBind);
     }
 
     @Test
@@ -150,7 +150,7 @@ class TelegramSendIntegrationTest extends IntegrationTest {
         final String wrongUrl = properties.getUrl().getSendMessage().replace("sendMessage", "weoifjweoijf");
 
         assertThatThrownBy(()->{
-            getDefaultTelegramSend().execute(wrongUrl, jsonBind.toJson(new SendMessageRequest(39327045, "hi!")));
+            getDefaultTelegramSend().message(new SendMessageRequest(39327045, "hi!"));
         }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Not Found");
 
         // {"ok":false,"error_code":404,"description":"Not Found"}
@@ -158,11 +158,11 @@ class TelegramSendIntegrationTest extends IntegrationTest {
 
     // url의 오류를 확인하기 하여 execute를 private이 아닌 package-private으로 둔다. 그리고 실제로 통신하기 위한 send 객체를 리턴한다. exeucte는 더 나아가 interface에 정의되지 않았다.
     private DefaultTelegramSend getDefaultTelegramSend() {
-        HttpClient httpClient = HttpClients.createDefault();
+        HttpHandler httpHandler = new HttpClientHttpHandler(HttpClients.createDefault());
         jsonBind = new DefaultJsonBind();
         properties = TelegramBotProperties.defaultProperties(token);
 
-        final DefaultTelegramSend send = new DefaultTelegramSend(httpClient, properties, jsonBind);
+        final DefaultTelegramSend send = new DefaultTelegramSend(httpHandler, properties, jsonBind);
         return send;
     }
 
@@ -170,7 +170,7 @@ class TelegramSendIntegrationTest extends IntegrationTest {
     @Disabled("empty를 텔레그램 api에서 확인하는 것이 아닌, MarkdownStringBuilder 로직에서 차단함. 더는 진입할 수 없는 테스트")
     void ex_empty_message(){
         assertThatThrownBy(()->{
-             getDefaultTelegramSend().execute(properties.getUrl().getSendMessage(), jsonBind.toJson(new SendMessageRequest(39327045, "")));
+            getDefaultTelegramSend().message( new SendMessageRequest(39327045, ""));
         }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("message text is empty");
         // {"ok":false,"error_code":400,"description":"Bad Request: message text is empty"}
     }

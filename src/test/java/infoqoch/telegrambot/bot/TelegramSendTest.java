@@ -34,7 +34,7 @@ class TelegramSendTest {
     TelegramSend send;
 
     // mock httpClient
-    HttpClient httpClient;
+    HttpHandler httpHandler;
     HttpResponse httpResponse;
     StatusLine statusLine;
     HttpEntity httpEntity;
@@ -45,14 +45,14 @@ class TelegramSendTest {
         JsonBind jsonBind = new DefaultJsonBind();
         TelegramBotProperties properties = TelegramBotProperties.defaultProperties(token);
 
-        httpClient = mock(HttpClient.class);
+        httpHandler = mock(HttpHandler.class);
         httpResponse = mock(HttpResponse.class);
         statusLine = mock(StatusLine.class);
         httpEntity = mock(HttpEntity.class);
 
         when(httpResponse.getEntity()).thenReturn(httpEntity);
         when(httpResponse.getStatusLine()).thenReturn(statusLine);
-        when(httpClient.execute(any(HttpPost.class))).thenReturn(httpResponse);
+        when(httpHandler.post(any(HttpPost.class))).thenReturn(httpResponse);
 
         send = new DefaultTelegramSend(httpClient, properties, jsonBind);
     }
