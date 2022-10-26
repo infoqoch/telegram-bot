@@ -5,6 +5,7 @@ import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.entity.Update;
 import infoqoch.telegrambot.bot.response.HttpResponseWrapper;
 import infoqoch.telegrambot.util.HttpGetParamMap;
+import infoqoch.telegrambot.util.HttpHandler;
 import infoqoch.telegrambot.util.JsonBind;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,6 @@ public class DefaultTelegramUpdate implements TelegramUpdate {
         httpGetParamMap.addParam("offset", String.valueOf(LAST_UPDATE_ID + 1));
         httpGetParamMap.addParam("timeout", String.valueOf(properties.getPollingTimeOut()));
         final HttpResponseWrapper response = httpHandler.get(httpGetParamMap);
-        return jsonBind.toList(response.body(), Update.class);
+        return jsonBind.toList(response.getBody(), Update.class);
     }
 }
