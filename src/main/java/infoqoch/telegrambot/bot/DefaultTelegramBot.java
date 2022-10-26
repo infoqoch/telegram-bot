@@ -1,8 +1,8 @@
 package infoqoch.telegrambot.bot;
 
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
+import infoqoch.telegrambot.util.HttpHandler;
 import infoqoch.telegrambot.util.JsonBind;
-import org.apache.http.client.HttpClient;
 
 public class DefaultTelegramBot implements TelegramBot {
     private final HttpHandler httpHandler;
