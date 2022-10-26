@@ -7,7 +7,6 @@ import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.request.FilePathRequest;
 import infoqoch.telegrambot.bot.request.SendMessageRequest;
 import infoqoch.telegrambot.bot.response.SendMessageResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -16,14 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @EnabledIf("isIntegrationTest")
 public class TelegramBotIntegrationTest extends IntegrationTest {
-
-    TelegramBot bot;
     String token = PropertiesUtil.getToken("test-telegram-token");
-
-    @BeforeEach
-    private void setUp() {
-        bot =  DefaultTelegramBotFactory.init(token);
-    }
+    TelegramBot bot = DefaultTelegramBotFactory.init(token);
 
     @Test
     @DisplayName("TelegramBot.send() 테스트")
@@ -46,4 +39,6 @@ public class TelegramBotIntegrationTest extends IntegrationTest {
         assertThat(response.getResult().getFilePath().contains("documents"));
         assertThat(response.getResult().getFilePath().contains("xlsx"));
     }
+
+
 }

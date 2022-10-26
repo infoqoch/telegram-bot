@@ -5,29 +5,29 @@ import infoqoch.telegrambot.util.JsonBind;
 import org.apache.http.client.HttpClient;
 
 public class DefaultTelegramBot implements TelegramBot {
-    private final HttpClient httpClient;
+    private final HttpHandler httpHandler;
     private final JsonBind jsonBind;
     private final TelegramBotProperties properties;
 
-    public DefaultTelegramBot(HttpClient httpClient, JsonBind jsonBind, TelegramBotProperties properties) {
-        this.httpClient = httpClient;
+    public DefaultTelegramBot(HttpHandler httpHandler, JsonBind jsonBind, TelegramBotProperties properties) {
+        this.httpHandler = httpHandler;
         this.jsonBind = jsonBind;
         this.properties = properties;
     }
 
     @Override
     public TelegramUpdate update() {
-        return new DefaultTelegramUpdate(httpClient, properties, jsonBind);
+        return new DefaultTelegramUpdate(httpHandler, properties, jsonBind);
     }
 
     @Override
     public TelegramSend send() {
-        return new DefaultTelegramSend(httpClient, properties, jsonBind);
+        return new DefaultTelegramSend(httpHandler, properties, jsonBind);
     }
 
     @Override
     public TelegramFile file() {
-        return new DefaultTelegramFile(httpClient, properties, jsonBind);
+        return new DefaultTelegramFile(httpHandler, properties, jsonBind);
     }
 
     @Override
