@@ -28,7 +28,6 @@ public class HttpClientHttpHandler implements HttpHandler{
             final HttpGet httpGet = new HttpGet(httpGetParamMap.createUrl());
             final HttpResponse response = httpClient.execute(httpGet);
             final HttpResponseWrapper wrapper = HttpResponseWrapper.of(response);
-            valid(wrapper);
             return wrapper;
 
         }catch (IOException e){
@@ -43,17 +42,10 @@ public class HttpClientHttpHandler implements HttpHandler{
             httpPost.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
             final HttpResponse response = httpClient.execute(httpPost);
             final HttpResponseWrapper wrapper = HttpResponseWrapper.of(response);
-            valid(wrapper);
             return wrapper;
 
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    private void valid(HttpResponseWrapper wrapper) {
-        if (wrapper.getStatusCode() < 400) return;
-        if (wrapper.getStatusCode() < 500) throw new IllegalArgumentException(wrapper.getBody());
-        throw new IllegalStateException(wrapper.getBody());
     }
 }

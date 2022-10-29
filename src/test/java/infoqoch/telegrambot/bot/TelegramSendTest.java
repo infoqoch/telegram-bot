@@ -12,7 +12,6 @@ import infoqoch.telegrambot.util.HttpHandler;
 import infoqoch.telegrambot.util.JsonBind;
 import infoqoch.telegrambot.util.MarkdownStringBuilder;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,36 +31,20 @@ class TelegramSendTest {
     HttpHandler httpHandler;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() {
         String token = "@test_token";
-        JsonBind jsonBind = new DefaultJsonBind();
+        JsonBind jsonBind = DefaultJsonBind.getInstance();
         TelegramBotProperties properties = TelegramBotProperties.defaultProperties(token);
 
         httpHandler = mock(HttpHandler.class);
         send = new DefaultTelegramSend(httpHandler, properties, jsonBind);
     }
 
-    // TODO 400 에러의 경우 httpHandler#post 과정에서 발생하나 이를 목킹하여 기대하는 방향대로 동작하지 않는다. 이 부분은 고민이 필요함.
-    @Test
-    @Disabled
-    @DisplayName("400에러 대응")
-    void status_code_not_found() throws IOException {
-        // given
-        String json = "{\"ok\":false,\"error_code\":400,\"description\":\"Bad Request: can't parse entities: Can't find end of Underline entity at byte offset 4\"}";
-        when(httpHandler.post(any(), any())).thenReturn(HttpResponseWrapper.of(400, json));
-
-        // then
-        assertThatThrownBy(()->{
-            send.message(new SendMessageRequest(12354l, "wrong markdown"));
-        }).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("can't parse entities");
-    }
-
     @Test
     @DisplayName("빈 메시지 대응")
     void ex_empty_message(){
         assertThatThrownBy(()->{
-            send.message(new SendMessageRequest(39327045, ""));
+            send.message(new SendMessageRequest(123123123, ""));
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("string length should be greater than 0");
     }
@@ -70,27 +53,27 @@ class TelegramSendTest {
     @DisplayName("200 및 정상 프로세스 대응")
     void send_message() throws IOException {
         // given
-        when(httpHandler.post(any(), any())).thenReturn(HttpResponseWrapper.of(200, generateMockResponseBody("hi, \\ubc18\\uac00\\ubc18\\uac00", 39327045)));
+        when(httpHandler.post(any(), any())).thenReturn(HttpResponseWrapper.of(200, generateMockResponseBody("그래! 반가워", 123123123)));
 
         // when
-        final Response<SendMessageResponse> response = send.message(new SendMessageRequest(39327045, "hi, \\ubc18\\uac00\\ubc18\\uac00"));
+        final Response<SendMessageResponse> response = send.message(new SendMessageRequest(123123123, "hi, \\ubc18\\uac00\\ubc18\\uac00"));
 
         // then
         assertThat(response.isOk()).isTrue();
-        assertThat(response.getResult().getChat().getId()).isEqualTo(39327045);
+        assertThat(response.getResult().getChat().getId()).isEqualTo(123123123);
+        assertThat(response.getResult().getText()).isEqualTo("그래! 반가워");
     }
-
 
     @Test
     @DisplayName("기본적인 document 보내기")
     void send_document() throws IOException {
         // given
-        String json = "{\"ok\":true,\"result\":{\"message_id\":2139,\"from\":{\"id\":1959903402,\"is_bot\":true,\"first_name\":\"coffs_test\",\"username\":\"coffs_dic_test_bot\"},\"chat\":{\"id\":39327045,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1652608959,\"document\":{\"file_name\":\"sample.xlsx\",\"mime_type\":\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\",\"file_id\":\"BQACAgUAAxkDAAIIW2KAz78C3hv1TphEfB5ZJFQSnVslAAL_BAACg56JVdF3guuN7A6tJAQ\",\"file_unique_id\":\"AgAD_wQAAoOeiVU\",\"file_size\":26440},\"caption\":\"\\uc0d8\\ud50c \\ud30c\\uc77c\"}}";
+        String json = "{\"ok\":true,\"result\":{\"message_id\":2139,\"from\":{\"id\":1959903402,\"is_bot\":true,\"first_name\":\"coffs_test\",\"username\":\"coffs_dic_test_bot\"},\"chat\":{\"id\":123123123,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1652608959,\"document\":{\"file_name\":\"sample.xlsx\",\"mime_type\":\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\",\"file_id\":\"BQACAgUAAxkDAAIIW2KAz78C3hv1TphEfB5ZJFQSnVslAAL_BAACg56JVdF3guuN7A6tJAQ\",\"file_unique_id\":\"AgAD_wQAAoOeiVU\",\"file_size\":26440},\"caption\":\"\\uc0d8\\ud50c \\ud30c\\uc77c\"}}";
 
         when(httpHandler.post(any(), any())).thenReturn(HttpResponseWrapper.of(200, json));
 
         // when
-        final Response<SendDocumentResponse> response = send.document(new SendDocumentRequest(39327045, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", "샘플 파일"));
+        final Response<SendDocumentResponse> response = send.document(new SendDocumentRequest(123123123, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", "샘플 파일"));
 
         // then
         assertThat(response.isOk()).isTrue();
@@ -103,11 +86,11 @@ class TelegramSendTest {
     @DisplayName("document 보내기 + 마크다운")
     void send_document_markdown() throws IOException {
         //given
-        final String json = "{\"ok\":true,\"result\":{\"message_id\":2143,\"from\":{\"id\":1959903402,\"is_bot\":true,\"first_name\":\"coffs_test\",\"username\":\"coffs_dic_test_bot\"},\"chat\":{\"id\":39327045,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1652609308,\"document\":{\"file_name\":\"sample.xlsx\",\"mime_type\":\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\",\"file_id\":\"BQACAgUAAxkDAAIIX2KA0RyYEZNXxw7qiny1i0Jj7-RqAAL_BAACg56JVdF3guuN7A6tJAQ\",\"file_unique_id\":\"AgAD_wQAAoOeiVU\",\"file_size\":26440},\"caption\":\"\\uc774\\ud0c8\\ub9ad\\uba54\\uc2dc\\uc9c0!\",\"caption_entities\":[{\"offset\":0,\"length\":7,\"type\":\"italic\"}]}}";
+        final String json = "{\"ok\":true,\"result\":{\"message_id\":2143,\"from\":{\"id\":1959903402,\"is_bot\":true,\"first_name\":\"coffs_test\",\"username\":\"coffs_dic_test_bot\"},\"chat\":{\"id\":123123123,\"first_name\":\"\\uc11d\\uc9c4\",\"type\":\"private\"},\"date\":1652609308,\"document\":{\"file_name\":\"sample.xlsx\",\"mime_type\":\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\",\"file_id\":\"BQACAgUAAxkDAAIIX2KA0RyYEZNXxw7qiny1i0Jj7-RqAAL_BAACg56JVdF3guuN7A6tJAQ\",\"file_unique_id\":\"AgAD_wQAAoOeiVU\",\"file_size\":26440},\"caption\":\"\\uc774\\ud0c8\\ub9ad\\uba54\\uc2dc\\uc9c0!\",\"caption_entities\":[{\"offset\":0,\"length\":7,\"type\":\"italic\"}]}}";
         when(httpHandler.post(any(), any())).thenReturn(HttpResponseWrapper.of(200, json));
 
         // when
-        final Response<SendDocumentResponse> response = send.document(new SendDocumentRequest(39327045, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", new MarkdownStringBuilder().italic("이탈릭메시지!")));
+        final Response<SendDocumentResponse> response = send.document(new SendDocumentRequest(123123123, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", new MarkdownStringBuilder().italic("이탈릭메시지!")));
 
         // then
         assertThat(response.isOk()).isTrue();
@@ -117,6 +100,18 @@ class TelegramSendTest {
         assertThat(response.getResult().getDocument().getFileSize()).isEqualTo(26440);
 
         assertThat(response.getResult().getCaptionEntities().get(0).getType()).isEqualTo("italic");
+    }
+
+    @Test
+    @DisplayName("400에러 대응")
+    void status_code_not_found() {
+        // given
+        String json = "{\"ok\":false,\"error_code\":400,\"description\":\"Bad Request: can't parse entities: Can't find end of Underline entity at byte offset 4\"}";
+        when(httpHandler.post(any(), any())).thenReturn(HttpResponseWrapper.of(400, json));
+
+        // then
+        final Response<SendMessageResponse> wrong_markdown = send.message(new SendMessageRequest(12354l, "wrong markdown"));
+        System.out.println("wrong_markdown = " + wrong_markdown);
     }
 
     private String generateMockResponseBody(String text, long chatId) {

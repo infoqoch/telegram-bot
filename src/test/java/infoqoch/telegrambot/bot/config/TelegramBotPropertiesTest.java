@@ -15,7 +15,7 @@ class TelegramBotPropertiesTest {
     }
 
     @Test
-    void get_properties_out_of_bot(){
+    void get_properties_by_bot(){
         TelegramBot bot =  DefaultTelegramBotFactory.init("@test_token");
         final TelegramBotProperties properties = TelegramBotProperties.defaultProperties("@test_token");
         assertThat(bot.url().getSendMessage()).isEqualTo(properties.getUrl().getSendMessage());

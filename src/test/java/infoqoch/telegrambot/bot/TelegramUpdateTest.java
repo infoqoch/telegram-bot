@@ -6,7 +6,6 @@ import infoqoch.telegrambot.bot.entity.Update;
 import infoqoch.telegrambot.bot.response.HttpResponseWrapper;
 import infoqoch.telegrambot.util.DefaultJsonBind;
 import infoqoch.telegrambot.util.HttpHandler;
-import infoqoch.telegrambot.util.JsonBind;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,12 +28,8 @@ class TelegramUpdateTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        String token = "@test_token";
-        JsonBind jsonBind = new DefaultJsonBind();
-        TelegramBotProperties properties = TelegramBotProperties.defaultProperties(token);
-
         httpHandler = mock(HttpHandler.class);
-        update = new DefaultTelegramUpdate(httpHandler, properties, jsonBind);
+        update = new DefaultTelegramUpdate(httpHandler, TelegramBotProperties.defaultProperties("@test_token"), DefaultJsonBind.getInstance());
     }
 
     @Test

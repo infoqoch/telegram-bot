@@ -9,6 +9,11 @@ import lombok.ToString;
 @ToString
 public class SendDocumentRequest {
     private final long chatId;
+    /*
+    * update는 file_id
+    * sendMessage때 는 document
+    * 로 프로퍼티의 key가 된다.
+    */
     private final String document;
     private final String caption;
     private final String parseMode;
