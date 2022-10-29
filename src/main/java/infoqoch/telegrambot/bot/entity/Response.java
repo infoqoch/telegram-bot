@@ -10,7 +10,7 @@ import java.util.List;
 public class Response<T> {
 	private boolean ok;
 	private T result;
-	private String errorCode;
+	private int errorCode;
 	private String description;
 
 	public boolean emptyResult(){

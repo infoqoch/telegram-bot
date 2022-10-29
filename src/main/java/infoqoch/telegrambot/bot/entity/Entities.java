@@ -9,5 +9,5 @@ public class Entities {
 	private int offset;
 	private int length;
 	private String type;
-	private String url; // type 이 url일 경우
+	private String url;
 }

@@ -15,7 +15,7 @@ public class ReplaceEverySingleCharSpeedTest {
     Map<String, Integer> compareMap;
 
     @Test
-    @Disabled // 테스트 완료하였고, 빠른 방법을 채택함.
+    @Disabled("테스트 완료하였고, 빠른 방법을 채택하였음")
     void compare_speed(){
         compareMap = new HashMap<>();
         compareMap.put("replace", 0);

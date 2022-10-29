@@ -20,6 +20,25 @@ import java.util.List;
 public class DefaultJsonBind implements JsonBind {
     private final ObjectMapper objectMapper;
 
+    private DefaultJsonBind(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addSerializer(LocalDateTime.class, new CustomLocalDateTimeSerializer());
+        simpleModule.addDeserializer(LocalDateTime.class, new CustomLocalDateTimeDeserializer());
+        simpleModule.addSerializer(Instant.class, new CustomEpochSerializer());
+        simpleModule.addDeserializer(Instant.class, new CustomEpochDeserializer());
+        objectMapper.registerModule(simpleModule);
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); // 바인딩되지 않는 필드에 대해 무시하고 예외를 던지지 않는다.
+        this.objectMapper = objectMapper;
+    }
+
+    public static DefaultJsonBind getInstance(){
+        return new DefaultJsonBind();
+    }
+
     @Override
     public String toJson(Object object) {
         try {
@@ -52,21 +71,6 @@ public class DefaultJsonBind implements JsonBind {
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    public DefaultJsonBind(){
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-        SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addSerializer(LocalDateTime.class, new CustomLocalDateTimeSerializer());
-        simpleModule.addDeserializer(LocalDateTime.class, new CustomLocalDateTimeDeserializer());
-        simpleModule.addSerializer(Instant.class, new CustomEpochSerializer());
-        simpleModule.addDeserializer(Instant.class, new CustomEpochDeserializer());
-        objectMapper.registerModule(simpleModule);
-        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); // 바인딩되지 않는 필드에 대해 무시하고 예외를 던지지 않는다.
-        this.objectMapper = objectMapper;
     }
 
     private class CustomLocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {

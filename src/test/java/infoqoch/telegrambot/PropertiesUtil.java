@@ -12,14 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class PropertiesUtil {
 
-    @Test
-    @Disabled
-    void test(){
-        String testTelegramToken = getToken("test-telegram-token");
-        assertThat(testTelegramToken).isEqualTo("your-telegram-bot-token-for-test");
-    }
-
-    public static String getToken(String key) {
+    public static String findProperty(String key) {
         try{
             final URL resource = PropertiesUtil.class.getClassLoader().getResource("application.properties");
             File path = new File(resource.toURI());
@@ -33,7 +26,10 @@ public class PropertiesUtil {
         }
     }
 
-    public static boolean isIntegrationTest(String key) {
-        return Boolean.parseBoolean(getToken(key));
+    @Test
+    @Disabled("프로퍼티가 없을 수 있으므로 생략한다.")
+    void test(){
+        String testTelegramToken = findProperty("test.telegram.integration");
+        assertThat(testTelegramToken).containsAnyOf("true", "false");
     }
 }
