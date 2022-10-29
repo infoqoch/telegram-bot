@@ -1,5 +1,8 @@
 package infoqoch.telegrambot.util;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode
 public class MarkdownStringBuilder {
     private final StringBuilder sb = new StringBuilder();
 

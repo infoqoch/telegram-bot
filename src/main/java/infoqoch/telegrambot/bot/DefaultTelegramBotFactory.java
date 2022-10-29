@@ -10,7 +10,7 @@ import org.apache.http.impl.client.HttpClients;
 public class DefaultTelegramBotFactory {
     public static TelegramBot init(String token) {
         HttpHandler httpHandler = new HttpClientHttpHandler(HttpClients.createDefault());
-        JsonBind jsonBind = new DefaultJsonBind();
+        JsonBind jsonBind = DefaultJsonBind.getInstance();
         TelegramBotProperties properties = TelegramBotProperties.defaultProperties(token);
         return new DefaultTelegramBot(httpHandler, jsonBind, properties);
     }

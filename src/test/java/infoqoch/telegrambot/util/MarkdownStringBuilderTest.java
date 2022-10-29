@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MarkdownStringBuilderTest {
+
     @Test
     void methods_test(){
         assertThat(new MarkdownStringBuilder().italic("흘림글씨야").toString()).isEqualTo("_흘림글씨야_");

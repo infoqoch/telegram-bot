@@ -1,8 +1,8 @@
 package infoqoch.telegrambot.bot;
 
-import infoqoch.telegrambot.IntegrationTest;
 import infoqoch.telegrambot.PropertiesUtil;
 import infoqoch.telegrambot.bot.config.TelegramBotProperties;
+import infoqoch.telegrambot.bot.config.TelegramUrls;
 import infoqoch.telegrambot.bot.entity.Response;
 import infoqoch.telegrambot.bot.request.SendDocumentRequest;
 import infoqoch.telegrambot.bot.request.SendMessageRequest;
@@ -10,7 +10,6 @@ import infoqoch.telegrambot.bot.response.SendDocumentResponse;
 import infoqoch.telegrambot.bot.response.SendMessageResponse;
 import infoqoch.telegrambot.util.DefaultJsonBind;
 import infoqoch.telegrambot.util.HttpClientHttpHandler;
-import infoqoch.telegrambot.util.HttpHandler;
 import infoqoch.telegrambot.util.MarkdownStringBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,31 +21,38 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@EnabledIf("isIntegrationTest")
-class TelegramSendIntegrationTest extends IntegrationTest {
+@EnabledIf("infoqoch.telegrambot.IntegrationTest#isIntegrationTest")
+class TelegramSendIntegrationTest {
+    // properties
+    String token = PropertiesUtil.findProperty("test.telegram.token");
+    int chatId = Integer.parseInt(PropertiesUtil.findProperty("test.telegram.chat-id"));
+
+    String document = PropertiesUtil.findProperty("test.telegram.document.file-id");
+    String fileName = PropertiesUtil.findProperty("test.telegram.document.file-name");
+    String fileType = PropertiesUtil.findProperty("test.telegram.document.file-type");
+    int fileSize = Integer.parseInt(PropertiesUtil.findProperty("test.telegram.document.size"));
+
+    // target
     TelegramSend send;
-    TelegramBotProperties properties;
-    DefaultJsonBind jsonBind;
-    String token = PropertiesUtil.getToken("test-telegram-token");
 
     @BeforeEach
     private void setUp() {
-
-        HttpHandler httpHandler = new HttpClientHttpHandler(HttpClients.createDefault());
-        jsonBind = new DefaultJsonBind();
-        properties = TelegramBotProperties.defaultProperties(token);
-        send = new DefaultTelegramSend(httpHandler, properties, jsonBind);
+        send = new DefaultTelegramSend(
+                new HttpClientHttpHandler(HttpClients.createDefault())
+                , TelegramBotProperties.defaultProperties(token)
+                , DefaultJsonBind.getInstance());
     }
 
     @Test
     @DisplayName("기본적인 document 보내기")
     void send_document(){
-        final Response<SendDocumentResponse> response = send.document(new SendDocumentRequest(39327045, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", "샘플 파일"));
+        final Response<SendDocumentResponse> response =
+                send.document(new SendDocumentRequest(chatId, document, "샘플 파일"));
 
         assertThat(response.isOk()).isTrue();
-        assertThat(response.getResult().getDocument().getMimeType()).isEqualTo("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        assertThat(response.getResult().getDocument().getFileName()).isEqualTo("sample.xlsx");
-        assertThat(response.getResult().getDocument().getFileSize()).isEqualTo(26440);
+        assertThat(response.getResult().getDocument().getMimeType()).isEqualTo(fileType);
+        assertThat(response.getResult().getDocument().getFileName()).isEqualTo(fileName);
+        assertThat(response.getResult().getDocument().getFileSize()).isEqualTo(fileSize);
 
         // {"ok":true,"result":{"message_id":2139,"from":{"id":1959903402,"is_bot":true,"first_name":"coffs_test","username":"coffs_dic_test_bot"},"chat":{"id":39327045,"first_name":"\uc11d\uc9c4","type":"private"},"date":1652608959,"document":{"file_name":"sample.xlsx","mime_type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","file_id":"BQACAgUAAxkDAAIIW2KAz78C3hv1TphEfB5ZJFQSnVslAAL_BAACg56JVdF3guuN7A6tJAQ","file_unique_id":"AgAD_wQAAoOeiVU","file_size":26440},"caption":"\uc0d8\ud50c \ud30c\uc77c"}}
     }
@@ -54,13 +60,13 @@ class TelegramSendIntegrationTest extends IntegrationTest {
     @Test
     @DisplayName("document 보내기 + 마크다운")
     void send_document_markdown(){
-        final Response<SendDocumentResponse> response = send.document(new SendDocumentRequest(39327045, "BQACAgUAAxkBAAIBYWEw4E0Q63sqghpV_lzmSZ2XSCrqAAL_BAACg56JVdF3guuN7A6tIAQ", new MarkdownStringBuilder().italic("이탈릭메시지!")));
+        final Response<SendDocumentResponse> response
+                = send.document(new SendDocumentRequest(chatId, document, new MarkdownStringBuilder().italic("이탈릭메시지!")));
 
         assertThat(response.isOk()).isTrue();
-
-        assertThat(response.getResult().getDocument().getMimeType()).isEqualTo("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        assertThat(response.getResult().getDocument().getFileName()).isEqualTo("sample.xlsx");
-        assertThat(response.getResult().getDocument().getFileSize()).isEqualTo(26440);
+        assertThat(response.getResult().getDocument().getMimeType()).isEqualTo(fileType);
+        assertThat(response.getResult().getDocument().getFileName()).isEqualTo(fileName);
+        assertThat(response.getResult().getDocument().getFileSize()).isEqualTo(fileSize);
 
         assertThat(response.getResult().getCaptionEntities().get(0).getType()).isEqualTo("italic");
 
@@ -70,7 +76,7 @@ class TelegramSendIntegrationTest extends IntegrationTest {
     @Test
     @DisplayName("기본적인 메시지 보내기")
     void send_message(){
-        final Response<SendMessageResponse> response = send.message(new SendMessageRequest(39327045, "hi, 반가반가"));
+        final Response<SendMessageResponse> response = send.message(new SendMessageRequest(chatId, "hi, 반가반가"));
 
         assertThat(response.isOk()).isTrue();
 
@@ -84,7 +90,7 @@ class TelegramSendIntegrationTest extends IntegrationTest {
         MarkdownStringBuilder msb = new MarkdownStringBuilder().plain("hi!").lineSeparator().italic("italic!").lineSeparator().code("while(true) beHappy(); ");
 
         // when
-        final Response<SendMessageResponse> response = send.message(new SendMessageRequest(39327045, msb));
+        final Response<SendMessageResponse> response = send.message(new SendMessageRequest(chatId, msb));
 
         assertThat(response.isOk()).isTrue();
         assertThat(response.getResult().getText()).isEqualTo("hi!\nitalic!\nwhile(true) beHappy();");
@@ -115,7 +121,7 @@ class TelegramSendIntegrationTest extends IntegrationTest {
                 .plain("<h3>코드블럭!</h3>").lineSeparator()
                 .command("search", "abc 123");
 
-        final Response<SendMessageResponse> response = send.message(new SendMessageRequest(39327045, msb));
+        final Response<SendMessageResponse> response = send.message(new SendMessageRequest(chatId, msb));
 
         assertThat(response.isOk()).isTrue();
         assertThat(response.getResult().getText()).isEqualTo("흘림글씨야\n" +
@@ -140,56 +146,40 @@ class TelegramSendIntegrationTest extends IntegrationTest {
     @Test
     @DisplayName("잘못된 chat_id")
     void ex_wrong_chatId(){
-        assertThatThrownBy(()->{
-            send.message(new SendMessageRequest(234098234092834098l, "hi, 반가반가"));
-        }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("chat not found");
+        final Response<SendMessageResponse> message = send.message(new SendMessageRequest(234098234092834098l, "hi, 반가반가"));
+
+        assertThat(message.isOk()).isFalse();
+        assertThat(message.getErrorCode()).isEqualTo(400);
+        assertThat(message.getDescription()).isEqualTo("Bad Request: chat not found");
+
         // {"ok":false,"error_code":400,"description":"Bad Request: chat not found"}
     }
 
-    // TODO 텔레그램의 잘못된 url을 입력하고자 한다. 그러나 현재 동작안한다. 프로퍼티 객체를 처음부터 잘못된 값을 넣는 것이 나을 것 같다.
-    @Disabled
     @Test
-    @DisplayName("잘못된 url")
-    void ex_wrong_url(){
-        properties.getUrl().getSendMessage().replace("sendMessage", "weoifjweoijf");
-        System.out.println("properties.getUrl().getSendMessage() = " + properties.getUrl().getSendMessage());
-
-        assertThatThrownBy(()->{
-                    getDefaultTelegramSend().message(new SendMessageRequest(39327045, "hi!"));
-        }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Not Found");
-
-//         {"ok":false,"error_code":404,"description":"Not Found"}
-    }
-
-    // url의 오류를 확인하기 하여 execute를 private이 아닌 package-private으로 둔다. 그리고 실제로 통신하기 위한 send 객체를 리턴한다. exeucte는 더 나아가 interface에 정의되지 않았다.
-    private DefaultTelegramSend getDefaultTelegramSend() {
-        HttpHandler httpHandler = new HttpClientHttpHandler(HttpClients.createDefault());
-        jsonBind = new DefaultJsonBind();
-        properties = TelegramBotProperties.defaultProperties(token);
-
-        final DefaultTelegramSend send = new DefaultTelegramSend(httpHandler, properties, jsonBind);
-        return send;
-    }
-
-    @Test
-    @Disabled("empty를 텔레그램 api에서 확인하는 것이 아닌, MarkdownStringBuilder 로직에서 차단함. 더는 진입할 수 없는 테스트")
-    void ex_empty_message(){
-        assertThatThrownBy(()->{
-            getDefaultTelegramSend().message( new SendMessageRequest(39327045, ""));
-        }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("message text is empty");
-        // {"ok":false,"error_code":400,"description":"Bad Request: message text is empty"}
-    }
-
-    @Test
-    @Disabled("escape 처리 없이 바로 메시지를 텔레그램에 보낼 수 없다.")
+    @Disabled("escape 처리가 되지 않았어도 그것을 무조건 esacpe 처리 함. MSB 내부에 오류가 없는 한 telegram에 잘못된 마크다운 문법을 보내지 않음.")
     void ex_send_wrong_message_with_markdown(){
-        long chatId = 39327045;
-        String text = "hi, __반가반가";
+        final Response<SendMessageResponse> message = send.message(new SendMessageRequest(chatId, "hi, __반가반가"));
 
-        assertThatThrownBy(()->{
-            send.message(new SendMessageRequest(chatId, text));
-        }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("can't parse entities");
+        assertThat(message.isOk()).isFalse();
+        assertThat(message.getErrorCode()).isEqualTo(400);
+        assertThat(message.getDescription()).isEqualTo("Bad Request: can't parse entities: Can't find end of Underline entity at byte offset 4");
 
         // {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Can't find end of Underline entity at byte offset 4"}
+    }
+
+    @Test
+    @Disabled("package-private으로 변경하였음. properties의 생성을 굳이 공개할 이유가 없다고 판단")
+    @DisplayName("잘못된 url")
+    void ex_wrong_url(){
+        final TelegramBotProperties properties = TelegramBotProperties.defaultProperties(token);
+
+        final TelegramUrls url = null; // null이 입력 됨.
+        final TelegramBotProperties wrongProp = new TelegramBotProperties(url, properties.getPollingTimeOut());
+
+        assertThatThrownBy(()->{
+            final DefaultTelegramSend send = new DefaultTelegramSend(new HttpClientHttpHandler(HttpClients.createDefault()), wrongProp, DefaultJsonBind.getInstance());
+            send.message(new SendMessageRequest(chatId, "hi!"));
+        }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Not Found");
+        // {"ok":false,"error_code":404,"description":"Not Found"}
     }
 }

@@ -12,7 +12,6 @@ import java.io.IOException;
 @Getter
 @ToString
 public class HttpResponseWrapper {
-
     private final int statusCode;
     private final String body;
 
