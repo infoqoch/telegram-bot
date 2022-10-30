@@ -20,7 +20,7 @@ public class DefaultTelegramFile implements TelegramFile {
 
     @Override
     public Response<FilePath> path(FilePathRequest request) {
-        final HttpResponseWrapper response = httpHandler.post(properties.getUrl().getGetFile(), jsonBind.toJson(request));
+        final HttpResponseWrapper response = httpHandler.post(properties.url().getFile(), jsonBind.toJson(request));
         return jsonBind.toObject(response.getBody(), FilePath.class);
     }
 }
