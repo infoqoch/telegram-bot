@@ -33,6 +33,6 @@ public class DefaultTelegramBot implements TelegramBot {
 
     @Override
     public TelegramUrls url() {
-        return properties.getUrl();
+        return properties.url();
     }
 }

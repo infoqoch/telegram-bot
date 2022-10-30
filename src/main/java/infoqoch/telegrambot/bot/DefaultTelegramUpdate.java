@@ -24,7 +24,7 @@ public class DefaultTelegramUpdate implements TelegramUpdate {
         this.httpHandler = httpHandler;
         this.properties = properties;
         this.jsonBind = jsonBind;
-        httpGetParamMap = new HttpGetParamMap(this.properties.getUrl().getGetUpdate(), Map.of("timeout", String.valueOf(properties.getPollingTimeOut())));
+        httpGetParamMap = new HttpGetParamMap(this.properties.url().getUpdate(), Map.of("timeout", String.valueOf(properties.pollingTimeOut())));
     }
 
     @Override
