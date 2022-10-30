@@ -22,13 +22,13 @@ public class DefaultTelegramSend implements TelegramSend {
 
     @Override
     public Response<SendMessageResponse> message(SendMessageRequest request) {
-        final HttpResponseWrapper response = httpHandler.post(properties.getUrl().getSendMessage(), jsonBind.toJson(request));
+        final HttpResponseWrapper response = httpHandler.post(properties.url().sendMessage(), jsonBind.toJson(request));
         return jsonBind.toObject(response.getBody(), SendMessageResponse.class);
     }
 
     @Override
     public Response<SendDocumentResponse> document(SendDocumentRequest request) {
-        final HttpResponseWrapper response = httpHandler.post(properties.getUrl().getSendDocument(), jsonBind.toJson(request));
+        final HttpResponseWrapper response = httpHandler.post(properties.url().sendDocument(), jsonBind.toJson(request));
         return jsonBind.toObject(response.getBody(), SendDocumentResponse.class);
     }
 }
