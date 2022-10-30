@@ -3,8 +3,9 @@ package infoqoch.telegrambot.bot.config;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
-@Getter
+@Getter @Accessors(fluent = true)
 @ToString
 @RequiredArgsConstructor
 public class TelegramBotProperties {

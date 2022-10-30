@@ -174,7 +174,7 @@ class TelegramSendIntegrationTest {
         final TelegramBotProperties properties = TelegramBotProperties.defaultProperties(token);
 
         final TelegramUrls url = null; // null이 입력 됨.
-        final TelegramBotProperties wrongProp = new TelegramBotProperties(url, properties.getPollingTimeOut());
+        final TelegramBotProperties wrongProp = new TelegramBotProperties(url, properties.pollingTimeOut());
 
         assertThatThrownBy(()->{
             final DefaultTelegramSend send = new DefaultTelegramSend(new HttpClientHttpHandler(HttpClients.createDefault()), wrongProp, DefaultJsonBind.getInstance());
