@@ -1,21 +1,34 @@
 package infoqoch.telegrambot.bot.config;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
-@Getter
+@Getter @Accessors(fluent = true)
 @ToString
-@RequiredArgsConstructor
 public class TelegramUrls {
     private final String token;
+    private final String base;
+
     private final String sendMessage;
     private final String getUpdate;
     private final String sendDocument;
     private final String document;
-    private final String base;
+    // file_id로 file_path를 찾는다.
     private final String getFile;
+    // file_path로 실제 file을 추출한다.
     private final String file;
+
+    public TelegramUrls(String token, String base, String sendMessage, String getUpdate, String sendDocument, String document, String getFile, String file) {
+        this.token = token;
+        this.sendMessage = sendMessage;
+        this.getUpdate = getUpdate;
+        this.sendDocument = sendDocument;
+        this.document = document;
+        this.base = base;
+        this.getFile = getFile;
+        this.file = file;
+    }
 
     static Builder builder(String token, String base) {
         return new Builder(token, base);
@@ -62,12 +75,12 @@ public class TelegramUrls {
         }
 
         Builder file(String file) {
-            this.file = token;
+            this.file = file;
             return this;
         }
 
         TelegramUrls build() {
-            return new TelegramUrls(token, sendMessage, getUpdate, sendDocument, document, base, getFile, file);
+            return new TelegramUrls(token, base, sendMessage, getUpdate, sendDocument, document, getFile, file);
         }
     }
 }
