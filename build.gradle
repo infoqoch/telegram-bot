@@ -1,13 +1,16 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'signing'
 }
 
 
-group = 'infoqoch'
-version = '0.2.2'
-description = 'telegram-bot'
 sourceCompatibility = '17'
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
 
 repositories {
     mavenCentral()
@@ -38,10 +41,67 @@ test {
     useJUnitPlatform()
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
+    publications{
+
+        mavenJava(MavenPublication){
+
+            groupId = 'io.github.infoqoch'
+            artifactId = 'telegram-bot'
+            version = '0.2.3'
             from components.java
+
+            pom {
+                name = 'telegram-bot'
+                description = 'simply telegram bot API written in java'
+                url = 'https://github.com/infoqoch/telegram-bot'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'infoqoch'
+                        name = 'infoqoch'
+                        email = 'infoqoch@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git:github.com/infoqoch/telegram-bot.git'
+                    developerConnection = 'scm:git:ssh://github.com/infoqoch/telegram-bot.git'
+                    url = 'https://github.com/infoqoch/telegram-bot'
+                }
+            }
         }
+    }
+
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = project.properties["ossrhUsername"]
+                password = project.properties["ossrhPassword"]
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
     }
 }
