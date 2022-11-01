@@ -3,6 +3,20 @@
 - [텔레그램 bot (https://core.telegram.org/bots)](https://core.telegram.org/bots)를 쉽게 사용하기 위한 라이브러리
 
 ## 사용
+- 의존성을 다운로드 받는다.
+
+```text
+// 그래들
+implementation 'io.github.infoqoch:telegram-bot:0.2.3'
+
+// 메이븐
+<dependency>
+  <groupId>io.github.infoqoch</groupId>
+  <artifactId>telegram-bot</artifactId>
+  <version>0.2.3</version>
+</dependency>
+```
+
 - DefaultTelegramBotFactory#init으로 사용한다.
 - 필요할 경우 인터페이스에 맞춰 구현할 수 있다.
 
@@ -41,3 +55,7 @@ public class Test {
 ## dictionary-bot
 - frontend controller pattern과 adapater pattern을 적용하여, 클라이언트의 채팅 메시지를 해석하는 어플리케이션을 개발하였음.
 - [사전봇 dictionary-bot : https://github.com/infoqoch/dictionary-v3](https://github.com/infoqoch/dictionary-v3)
+
+
+## version
+- 0.2.3 메이븐 배포
