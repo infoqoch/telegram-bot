@@ -60,7 +60,7 @@ publishing {
 
             groupId = 'io.github.infoqoch'
             artifactId = 'telegram-bot'
-            version = '0.2.3'
+            version = '0.2.4'
             from components.java
 
             pom {
@@ -108,7 +108,4 @@ signing {
 
 javadoc {
     options.encoding = 'UTF-8'
-    if(JavaVersion.current().isJava9Compatible()) {
-        options.addBooleanOption('html5', true)
-    }
 }
