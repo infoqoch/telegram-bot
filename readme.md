@@ -7,7 +7,7 @@
 
 ```text
 // 그래들
-implementation 'io.github.infoqoch:telegram-bot:0.2.3'
+implementation 'io.github.infoqoch:telegram-bot:0.2.4'
 
 // 메이븐
 <dependency>
@@ -17,8 +17,9 @@ implementation 'io.github.infoqoch:telegram-bot:0.2.3'
 </dependency>
 ```
 
-- DefaultTelegramBotFactory#init으로 사용한다.
-- 필요할 경우 인터페이스에 맞춰 구현할 수 있다.
+- DefaultTelegramBotFactory#init을 사용한다.
+- 텔레그램 봇에서 발급받은 토큰을 입력한다. 
+- 기타 자세한 설정이 필요할 경우 구현한다.
 
 ```java
 public class Test {
@@ -26,7 +27,7 @@ public class Test {
     
     void update(){
         TelegramUpdate update = bot.update();
-        final Response<List<Update>> response = update.get(0L);
+        Response<List<Update>> response = update.get(0L);
     }
 }
 ```
@@ -34,7 +35,7 @@ public class Test {
 ## 지원 기능
 ### getUpdate -> TelegramUpdate
 - 클라이언트가 작성한 채팅 메시지를 수거한다.
-- long-polling을 지원하며 최대 값은 60초 이다.
+- long-polling으로 동작한다. 최대 값은 60초 이다.
 
 ### send -> TelegramSend
 - sendMessage : 특정 클라이언트에 메시지를 보낸다.
@@ -44,18 +45,24 @@ public class Test {
 - Document의 file_id를 기준으로 텔레그램 클라우드의 실제 파일 주소(file_path)의 일부를 가져온다.
 - 파일의 url의 형태는 다음과 같다 : https://api.telegram.org/file/bot{token}/{filePath}
 
-### 마크다운
-- 텔레그램이 제공하는 포맷 중 텔레그램을 사용한다.
-- MarkdownStringBuilder로 메시지를 작성한다.
+### 문자열 포맷 : 마크다운
+- 텔레그램이 제공하는 포맷 중 마크다운을 사용한다.
+- MarkdownStringBuilder 객체로 추상화하였다.
 
 ## 테스트
-- 텔레그램과의 정상적인 통신을 보장하기 위하여 통합테스트를 포함한다. 통합 테스트는 ***IntegrationTest란 이름을 가진다.
+- 기본적으로 유닛테스트만 동작한다.
+- 텔레그램과의 정상적인 통신을 보장하기 위하여 통합테스트를 포함한다. 통합 테스트는 ***IntegrationTest 형태의 이름을 가진다. 
 - 테스트에 대한 구체적인 설정은 /test/resources/application.properties 를 참고한다.
 
-## dictionary-bot
-- frontend controller pattern과 adapater pattern을 적용하여, 클라이언트의 채팅 메시지를 해석하는 어플리케이션을 개발하였음.
-- [사전봇 dictionary-bot : https://github.com/infoqoch/dictionary-v3](https://github.com/infoqoch/dictionary-v3)
+# 구현 프로젝트
+## telegram-framwork
+- [텔레그램프레임워크 telegram-framework : https://github.com/infoqoch/telegram-framework](https://github.com/infoqoch/telegram-framework)
+- telegram-bot을 확장하여 annotation 기반의 쉬운 확장이 가능한 프레임워크를 제작
 
+## dictionary-bot
+- telegram-framework를 기반으로 구현한 사전봇
+- 현재 텔레그램의 채널로 동작 중 : @custom_dictionary_bot  
 
 ## version
-- 0.2.3 메이븐 배포
+- 0.2.3 메이븐 리포지토리 최초 배포
+- 0.2.4 자바 8 버전으로 컴파일
