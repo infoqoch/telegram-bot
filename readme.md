@@ -7,13 +7,13 @@
 
 ```text
 // 그래들
-implementation 'io.github.infoqoch:telegram-bot:0.2.4'
+implementation 'io.github.infoqoch:telegram-bot:0.3.0'
 
 // 메이븐
 <dependency>
   <groupId>io.github.infoqoch</groupId>
   <artifactId>telegram-bot</artifactId>
-  <version>0.2.3</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
@@ -66,3 +66,7 @@ public class Test {
 ## version
 - 0.2.3 메이븐 리포지토리 최초 배포
 - 0.2.4 자바 8 버전으로 컴파일
+- 0.3.0
+  - 자바 17 버전으로 변경
+  - Spring Framework 6의 최신 버전으로 변경, 기타 의존성 변경
+  - http client를 Apache HttpClient 4에서 JDK 내장으로 변경 
