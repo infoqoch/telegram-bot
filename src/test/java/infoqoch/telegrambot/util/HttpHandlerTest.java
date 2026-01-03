@@ -37,7 +37,7 @@ class HttpHandlerTest {
         httpClient = mock(HttpClient.class);
         httpResponse = mock(HttpResponse.class);
 
-        httpHandler = new HttpClientHttpHandler(httpClient);
+        httpHandler = new HttpClientHttpHandler(httpClient, false);
     }
 
     @Test
