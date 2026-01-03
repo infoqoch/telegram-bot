@@ -11,7 +11,6 @@ import infoqoch.telegrambot.bot.response.SendMessageResponse;
 import infoqoch.telegrambot.util.DefaultJsonBind;
 import infoqoch.telegrambot.util.HttpClientHttpHandler;
 import infoqoch.telegrambot.util.MarkdownStringBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +37,7 @@ class TelegramSendIntegrationTest {
     @BeforeEach
     private void setUp() {
         send = new DefaultTelegramSend(
-                new HttpClientHttpHandler(HttpClients.createDefault())
+                HttpClientHttpHandler.createDefault()
                 , TelegramBotProperties.defaultProperties(token)
                 , DefaultJsonBind.getInstance());
     }
@@ -177,7 +176,7 @@ class TelegramSendIntegrationTest {
         final TelegramBotProperties wrongProp = new TelegramBotProperties(url, properties.pollingTimeOut());
 
         assertThatThrownBy(()->{
-            final DefaultTelegramSend send = new DefaultTelegramSend(new HttpClientHttpHandler(HttpClients.createDefault()), wrongProp, DefaultJsonBind.getInstance());
+            final DefaultTelegramSend send = new DefaultTelegramSend(HttpClientHttpHandler.createDefault(), wrongProp, DefaultJsonBind.getInstance());
             send.message(new SendMessageRequest(chatId, "hi!"));
         }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Not Found");
         // {"ok":false,"error_code":404,"description":"Not Found"}
