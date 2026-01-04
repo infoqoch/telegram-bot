@@ -32,3 +32,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Secrets (Maven Central 배포 관련 민감 정보) ###
+gradle.properties
+secret-keys.gpg
+*.gpg

@@ -2,11 +2,11 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'signing'
+    // Maven Central 배포를 위한 nmcp 플러그인
+    id 'com.gradleup.nmcp.aggregation' version '1.4.3'
 }
 
-
 sourceCompatibility = '17'
-compileJava.options.encoding = 'UTF-8'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -17,43 +17,40 @@ repositories {
 }
 
 dependencies {
-    // di container
+    // DI container
     implementation 'org.springframework:spring-context:6.2.15'
 
+    // Logging & JSON
     implementation 'ch.qos.logback:logback-classic:1.5.23'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.1'
 
-    // lombok
+    // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.42'
     annotationProcessor 'org.projectlombok:lombok:1.18.42'
     testCompileOnly 'org.projectlombok:lombok:1.18.42'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.42'
 
-    // 테스트
+    // Test
     testImplementation 'org.junit.jupiter:junit-jupiter:5.14.1'
     testImplementation 'org.mockito:mockito-core:5.21.0'
     testImplementation 'org.skyscreamer:jsonassert:1.5.3'
     testImplementation 'org.assertj:assertj-core:3.27.6'
 }
 
-build{
-
-}
-
 test {
     useJUnitPlatform()
 }
 
+// Maven Central 배포를 위한 Javadoc 및 Sources JAR 생성
 java {
     withJavadocJar()
     withSourcesJar()
 }
 
+// Maven Central 배포를 위한 Publication 설정
 publishing {
-    publications{
-
-        mavenJava(MavenPublication){
-
+    publications {
+        mavenJava(MavenPublication) {
             groupId = 'io.github.infoqoch'
             artifactId = 'telegram-bot'
             version = '0.3.0'
@@ -85,19 +82,9 @@ publishing {
             }
         }
     }
-
-    repositories {
-        maven {
-            name = "OSSRH"
-            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-            credentials {
-                username = project.properties["ossrhUsername"]
-                password = project.properties["ossrhPassword"]
-            }
-        }
-    }
 }
 
+// GPG 서명 설정 (gradle.properties에서 signing.* 속성 읽음)
 signing {
     required { gradle.taskGraph.hasTask("publish") && !gradle.taskGraph.hasTask("publishToMavenLocal") }
     sign publishing.publications.mavenJava
@@ -105,4 +92,16 @@ signing {
 
 javadoc {
     options.encoding = 'UTF-8'
+}
+
+// Maven Central Portal 배포 설정 (gradle.properties에서 credentials 읽음)
+nmcpAggregation {
+    centralPortal {
+        username = project.properties["ossrhUsername"]
+        password = project.properties["ossrhPassword"]
+        // USER_MANAGED: 수동으로 Central Portal에서 승인
+        // AUTOMATIC: 자동으로 배포 (validation 통과 시)
+        publishingType = "USER_MANAGED"
+    }
+    publishAllProjectsProbablyBreakingProjectIsolation()
 }
