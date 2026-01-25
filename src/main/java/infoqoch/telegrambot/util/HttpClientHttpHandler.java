@@ -29,11 +29,17 @@ public class HttpClientHttpHandler implements HttpHandler{
     @Override
     public HttpResponseWrapper get(HttpGetParamMap httpGetParamMap) {
         try{
+            URI uri = URI.create(httpGetParamMap.createUrl());
+            log.trace("request url:{}", uri);
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(httpGetParamMap.createUrl()))
+                .uri(uri)
                 .GET()
                 .build();
+
             HttpResponse<String> response = send(request);
+
+            log.trace("response status:{}, body:{}", response.statusCode(), response.body());
+            throwExceptionWhenLessThan400(response);
             return HttpResponseWrapper.of(response.statusCode(), response.body());
 
         }catch (IOException | InterruptedException e){
@@ -44,12 +50,18 @@ public class HttpClientHttpHandler implements HttpHandler{
     @Override
     public HttpResponseWrapper post(String url, String json) {
         try {
+            URI uri = URI.create(url);
+            log.trace("request url:{}, body:{}", uri, json);
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(uri)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
+
             HttpResponse<String> response = send(request);
+
+            log.trace("response status:{}, body:{}", response.statusCode(), response.body());
+            throwExceptionWhenLessThan400(response);
             return HttpResponseWrapper.of(response.statusCode(), response.body());
 
         } catch (IOException | InterruptedException e) {
@@ -60,5 +72,11 @@ public class HttpClientHttpHandler implements HttpHandler{
     private HttpResponse<String> send(HttpRequest request) throws IOException, InterruptedException {
         if(async) return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).join();
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private void throwExceptionWhenLessThan400(HttpResponse<String> response) {
+        if(response.statusCode() >= 400)
+            throw new IllegalStateException("failed to send message. status code:" + response.statusCode() + ", body:" + response.body());
+
     }
 }
