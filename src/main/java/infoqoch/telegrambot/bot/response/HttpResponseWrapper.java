@@ -17,7 +17,6 @@ public class HttpResponseWrapper {
     }
 
     public static HttpResponseWrapper of(int statusCode, String body) {
-        log.debug("response content body : {}", body);
         return new HttpResponseWrapper(statusCode, body);
     }
 }

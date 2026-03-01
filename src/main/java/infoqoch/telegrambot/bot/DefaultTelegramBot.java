@@ -32,6 +32,11 @@ public class DefaultTelegramBot implements TelegramBot {
     }
 
     @Override
+    public TelegramBotName botName(){
+        return new DefaultBotName(httpHandler, properties, jsonBind);
+    }
+
+    @Override
     public TelegramUrls url() {
         return properties.url();
     }

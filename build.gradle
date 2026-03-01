@@ -56,7 +56,7 @@ publishing {
 
             groupId = 'io.github.infoqoch'
             artifactId = 'telegram-bot'
-            version = '0.3.0'
+            version = '0.3.1-SNAPSHOT'
             from components.java
 
             pom {
@@ -95,11 +95,19 @@ publishing {
                 password = project.properties["ossrhPassword"]
             }
         }
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/infoqoch/telegram-bot"
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
 }
 
 signing {
-    required { gradle.taskGraph.hasTask("publish") && !gradle.taskGraph.hasTask("publishToMavenLocal") }
+    required { gradle.taskGraph.hasTask("publishMavenJavaPublicationToOSSRHRepository") }
     sign publishing.publications.mavenJava
 }
 
