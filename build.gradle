@@ -56,7 +56,7 @@ publishing {
 
             groupId = 'io.github.infoqoch'
             artifactId = 'telegram-bot'
-            version = '0.3.1-SNAPSHOT'
+            version = '0.3.1-SNAPSHOT-5'
             from components.java
 
             pom {

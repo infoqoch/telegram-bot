@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.concurrent.Executor;
 
 @Slf4j
@@ -18,12 +19,20 @@ public class HttpClientHttpHandler implements HttpHandler{
     private final HttpClient httpClient;
     private final boolean async;
 
+    private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);
+    private static final Duration GET_REQUEST_TIMEOUT = Duration.ofSeconds(75);
+    private static final Duration POST_REQUEST_TIMEOUT = Duration.ofSeconds(30);
+
     public static HttpClientHttpHandler createDefault(){
-        return new HttpClientHttpHandler(HttpClient.newHttpClient(), false);
+        return new HttpClientHttpHandler(
+                HttpClient.newBuilder().connectTimeout(CONNECT_TIMEOUT).build(),
+                false);
     }
 
     public static HttpHandler createAsyncDefault(Executor executor) {
-        return new HttpClientHttpHandler(HttpClient.newBuilder().executor(executor).build(), true);
+        return new HttpClientHttpHandler(
+                HttpClient.newBuilder().executor(executor).connectTimeout(CONNECT_TIMEOUT).build(),
+                true);
     }
 
     @Override
@@ -34,6 +43,7 @@ public class HttpClientHttpHandler implements HttpHandler{
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .GET()
+                .timeout(GET_REQUEST_TIMEOUT)
                 .build();
 
             HttpResponse<String> response = send(request);
@@ -56,6 +66,7 @@ public class HttpClientHttpHandler implements HttpHandler{
                 .uri(uri)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
+                .timeout(POST_REQUEST_TIMEOUT)
                 .build();
 
             HttpResponse<String> response = send(request);
