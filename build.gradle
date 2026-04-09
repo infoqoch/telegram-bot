@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'signing'
+    id 'com.gradleup.nmcp' version '1.4.3'
 }
 
 
@@ -56,7 +57,7 @@ publishing {
 
             groupId = 'io.github.infoqoch'
             artifactId = 'telegram-bot'
-            version = '0.3.1-SNAPSHOT-5'
+            version = '0.3.1'
             from components.java
 
             pom {
@@ -88,14 +89,6 @@ publishing {
 
     repositories {
         maven {
-            name = "OSSRH"
-            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-            credentials {
-                username = project.properties["ossrhUsername"]
-                password = project.properties["ossrhPassword"]
-            }
-        }
-        maven {
             name = "GitHubPackages"
             url = "https://maven.pkg.github.com/infoqoch/telegram-bot"
             credentials {
@@ -107,10 +100,18 @@ publishing {
 }
 
 signing {
-    required { gradle.taskGraph.hasTask("publishMavenJavaPublicationToOSSRHRepository") }
+    required { gradle.taskGraph.hasTask("publishToSonatype") }
     sign publishing.publications.mavenJava
 }
 
 javadoc {
     options.encoding = 'UTF-8'
+}
+
+nmcp {
+    publishAllPublicationsToCentralPortal {
+        username = project.properties["ossrhUsername"]
+        password = project.properties["ossrhPassword"]
+        publishingType = "USER_MANAGED"
+    }
 }

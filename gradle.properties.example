@@ -1,0 +1,12 @@
+# GPG 서명 설정 (Maven Central 필수)
+signing.keyId=YOUR_KEY_ID
+signing.password=YOUR_PASSWORD
+signing.secretKeyRingFile=secret-keys.gpg
+
+# Maven Central Portal User Token (https://central.sonatype.com/account/usertoken 에서 발급)
+ossrhUsername=YOUR_CENTRAL_PORTAL_TOKEN_USERNAME
+ossrhPassword=YOUR_CENTRAL_PORTAL_TOKEN_PASSWORD
+
+# GitHub Packages
+gpr.user=YOUR_GITHUB_USERNAME
+gpr.token=YOUR_GITHUB_TOKEN
