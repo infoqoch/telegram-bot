@@ -25,10 +25,26 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
-/gradle/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
+
+### Gradle ###
+.gradle/
+gradle.properties
+
+### Secrets ###
+secret-keys.gpg
+
+### Build output ###
+out/
+
+### Docs (local reference) ###
+.docs/
+
+### AI agency ###
+.omc/
+.claude/

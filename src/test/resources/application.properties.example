@@ -1,0 +1,9 @@
+test.telegram.integration = true
+test.telegram.token = YOUR_TELEGRAM_TOKEN
+test.telegram.chat-id = YOUR_CHAT_ID
+
+test.telegram.document.file-id = YOUR_FILE_ID
+test.telegram.document.size = YOUR_FILE_SIZE
+test.telegram.document.file-name = YOUR_FILE_NAME
+test.telegram.document.file-type = YOUR_FILE_TYPE
+test.telegram.document.file-path = YOUR_FILE_PATH

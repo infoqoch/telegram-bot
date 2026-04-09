@@ -49,6 +49,10 @@ public class Test {
 - 텔레그램이 제공하는 포맷 중 마크다운을 사용한다.
 - MarkdownStringBuilder 객체로 추상화하였다.
 
+## 로깅
+### 텔레그램과의 API 통신 전문에 대한 로깅
+- infoqoch.telegrambot.util.HttpClientHttpHandler: DEBUG
+
 ## 테스트
 - 기본적으로 유닛테스트만 동작한다.
 - 텔레그램과의 정상적인 통신을 보장하기 위하여 통합테스트를 포함한다. 통합 테스트는 ***IntegrationTest 형태의 이름을 가진다. 

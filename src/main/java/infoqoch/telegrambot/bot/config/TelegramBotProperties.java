@@ -15,6 +15,7 @@ public class TelegramBotProperties {
     public static TelegramBotProperties defaultProperties(String token) {
         String base = "https://api.telegram.org/bot" + token;
         final TelegramUrls url = TelegramUrls.builder(token, base)
+                .getMyName(base + "/getMyName")
                 .sendMessage(base + "/sendMessage")
                 .sendDocument(base + "/sendDocument")
                 .getUpdate(base + "/getUpdates")
